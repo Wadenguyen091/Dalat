@@ -57,6 +57,12 @@ a { color: inherit; }
 .app[data-view="timeline"] .mapcard, .app[data-view="map"] .day-panel { display: none; }
 .timeline { display: grid; gap: var(--s8); }
 .slot-header { margin-bottom: var(--s3); }
+.slot-time-row { display: flex; align-items: center; gap: var(--s1); position: relative; }
+.slot-note summary { list-style: none; display: grid; place-items: center; width: var(--tap); height: var(--tap); border-radius: 50%; color: var(--text-secondary); cursor: pointer; }
+.slot-note summary::-webkit-details-marker { display: none; }
+.slot-note summary:hover, .slot-note[open] summary { background: var(--surface-secondary); color: var(--text-primary); }
+.slot-tooltip { position: absolute; z-index: 2; inset-inline-start: 0; top: 100%; width: min(100%, 320px); padding: var(--s3); border: 1px solid var(--border); border-radius: var(--r12); background: var(--surface); box-shadow: 0 4px 16px rgb(0 0 0 / 10%); color: var(--text-primary); font: var(--body) var(--font); }
+.slot-note:not([open]) .slot-tooltip { display: none; }
 .time { font: var(--time) var(--font); color: var(--text-primary); letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
 .slot h2, .maphead h2 { font: var(--heading) var(--font); letter-spacing: -.03em; }
 .slot h2 { margin-top: var(--s1); }
@@ -82,7 +88,7 @@ a { color: inherit; }
 .pick:has(input:disabled) { cursor: default; }
 .pick input:disabled { opacity: .55; }
 button:disabled { cursor: default; opacity: .55; }
-.note.alert, .route-note.alert { background: var(--surface-secondary); border-radius: var(--r8); padding: var(--s2); }
+.route-note.alert { background: var(--surface-secondary); border-radius: var(--r8); padding: var(--s2); }
 .icon-button, .action { display: inline-flex; justify-content: center; align-items: center; gap: var(--s2); min-height: var(--tap); padding: var(--s2) var(--s3); border: 0; border-radius: var(--r12); background: var(--selected); color: var(--surface); text-decoration: none; text-align: center; font: var(--body) var(--font); }
 .icon-button { width: var(--tap); padding: 0; }
 .icon-button, .action.alt { background: var(--surface-secondary); color: var(--text-primary); }
@@ -171,6 +177,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <path d="M22 5h-4" />
   <path d="M4 17v2" />
   <path d="M5 18H3" /></symbol>
+    <symbol id="lucide-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
   </svg>
   <main class="app" data-view="timeline">
     <header class="topbar">
@@ -1464,11 +1471,16 @@ function render() {
   document.getElementById("timeline").innerHTML = current.slots.map(slot =>
     `<article class="slot" data-slot-card="${slot.id}">
       <header class="slot-header">
-        <p class="time">${escapeHtml(slot.time)}</p>
+        <div class="slot-time-row">
+          <p class="time">${escapeHtml(slot.time)}</p>
+          ${slot.note ? `<details class="slot-note" name="slot-notes">
+            <summary aria-label="Ghi chú: ${escapeHtml(slot.title)}">${icon("info")}</summary>
+            <p class="slot-tooltip">${escapeHtml(slotNotes[slot.id] ?? slot.note)}</p>
+          </details>` : ""}
+        </div>
         <h2>${escapeHtml(slot.title)}</h2>
       </header>
       <div class="place-list">${options(slot).map(id => renderChoice(slot, id)).join("")}</div>
-      ${slot.note ? `<div class="note ${slot.kind === "required-unresolved" ? "alert" : ""}">${escapeHtml(slotNotes[slot.id] ?? slot.note)}</div>` : ""}
     </article>`
   ).join("");
   (/** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll("[data-details]"))).forEach(button => {
@@ -1567,6 +1579,22 @@ function renderMap(slots) {
   if (known.length > 1) map.fitBounds(known.map(place => place.position.coordinates), {padding:[28,28], maxZoom:18});
   else map.setView(known[0]?.position.coordinates ?? mapCenter, known.length ? 15 : 12);
 }
+
+document.addEventListener("click", event => {
+  const target = event.target;
+  if (!(target instanceof Node)) return;
+  document.querySelectorAll("details.slot-note[open]").forEach(note => {
+    if (!note.contains(target)) note.removeAttribute("open");
+  });
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key !== "Escape" || placeSheet.open) return;
+  const summary = document.querySelector("details.slot-note[open] > summary");
+  if (!(summary instanceof HTMLElement)) return;
+  summary.parentElement.removeAttribute("open");
+  summary.focus({preventScroll:true});
+});
 
 placeSheet.addEventListener("click", event => {
   if (event.target !== placeSheet) return;
