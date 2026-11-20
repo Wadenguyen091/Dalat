@@ -3,141 +3,207 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#faf9f5">
+  <meta name="theme-color" content="#f7f7f7">
   <title>Đà Lạt Escape · Team 6</title>
   <style>
+/* Foundations. All layout spacing and corner radii use the 4px scale. */
 :root {
   color-scheme: light;
-  --paper: #faf9f5;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-11: 44px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-18: 72px;
+  --canvas: #f7f7f7;
   --surface: #fff;
-  --ink: #182923;
-  --muted: #53625a;
-  --accent: #1e634d;
-  --wash: #eaf3ed;
-  --line: #e0e6df;
-  --radius: 20px;
+  --text: #171717;
+  --secondary: #525252;
+  --border: #dedede;
+  --control-border: #737373;
+  --subtle: #ededed;
+  --selected: #262626;
+  --inverse: #fff;
+  --overlay: rgb(0 0 0 / 55%);
+  --focus: #404040;
+  --text-caption: 12px;
+  --text-label: 14px;
+  --text-body: 16px;
+  --text-heading: 20px;
+  --text-title: 24px;
+  --leading-caption: 16px;
+  --leading-label: 20px;
+  --leading-body: 24px;
+  --leading-heading: 28px;
+  --leading-title: 32px;
+  --regular: 400;
+  --medium: 550;
+  --semibold: 650;
+  --bold: 750;
+  --radius-small: var(--space-2);
+  --radius-medium: var(--space-3);
+  --radius-large: var(--space-4);
+  --radius-sheet: var(--space-6);
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--paper); color: var(--ink); }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--canvas); color: var(--text); font-size: var(--text-body); line-height: var(--leading-body); }
 button, input { font: inherit; }
-button, a { -webkit-tap-highlight-color: transparent; }
 button { cursor: pointer; }
-a { color: var(--accent); text-underline-offset: 3px; }
-:focus-visible { outline: 3px solid #367b66; outline-offset: 3px; }
-.app { max-width: 1090px; margin: auto; padding: 0 18px 100px; }
-.trip {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  column-gap: 8px;
-  align-items: start;
-  margin: 18px 0 14px;
-  padding: 25px 16px;
-  border-radius: 23px;
-  color: white;
-  background-color: #1b3b2d;
-  background-image: linear-gradient(90deg, #142c20 5%, #142c20c9 48%, #142c2066), url("https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Da_Lat_-_Xuan_Huong_Lake.jpg/960px-Da_Lat_-_Xuan_Huong_Lake.jpg");
-  background-size: cover;
-  background-position: center 52%;
-}
-.trip .eyebrow, .trip .sub { color: #e5efe8; }
-.eyebrow { margin: 0 0 7px; color: var(--accent); font-size: 13px; font-weight: 750; }
-h1 { margin: 0; font-size: clamp(32px, 8.2vw, 62px); letter-spacing: -.065em; line-height: 1.05; }
-.sub { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
-.share { margin-top: 6px; }
-.tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin: 0 0 21px; }
-.tabs button { display: grid; gap: 3px; min-height: 62px; place-content: center; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 650; }
-.tabs button span { color: var(--ink); font-size: 19px; font-weight: 780; letter-spacing: -.035em; }
-.tabs .active { background: var(--accent); border-color: var(--accent); color: #e0f4e6; }
-.tabs .active span { color: white; }
-.day-area { color: var(--muted); margin: 0 0 14px; font-size: 13px; line-height: 1.5; }
-.timeline { display: grid; gap: 16px; }
-.slot { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 15px; }
-.slot-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
-.time { color: var(--accent); font-size: 12px; font-weight: 750; font-variant-numeric: tabular-nums; }
-.slot h2 { margin: 4px 0 9px; font-size: 21px; letter-spacing: -.04em; line-height: 1.18; }
-.slot-kind { margin: 0; color: var(--muted); font-size: 12px; }
-.choice { display: grid; grid-template-columns: 44px minmax(0,1fr) auto; align-items: center; gap: 5px; border-top: 1px solid var(--line); padding: 7px 0; }
+button, a, input { -webkit-tap-highlight-color: transparent; }
+a { color: inherit; }
+h1, h2, p { margin: 0; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--space-1); }
+.icon-library { position: absolute; width: 0; height: 0; overflow: hidden; }
+.icon { width: var(--space-5); height: var(--space-5); flex: none; }
+.small-icon .icon, .source .icon { width: var(--space-4); height: var(--space-4); }
+.app { max-width: 1088px; margin: auto; padding: 0 var(--space-4) calc(var(--space-18) + env(safe-area-inset-bottom)); }
+.topbar { display: flex; gap: var(--space-3); justify-content: space-between; align-items: center; padding: var(--space-4) 0; }
+.topbar h1 { font-size: var(--text-heading); line-height: var(--leading-heading); font-weight: var(--bold); letter-spacing: -.035em; }
+.sub { color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); }
+.tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: var(--space-1); background: var(--subtle); padding: var(--space-1); border-radius: var(--radius-medium); margin-bottom: var(--space-4); }
+.tabs button { display: grid; place-content: center; min-height: var(--space-12); border: 0; border-radius: var(--radius-small); background: transparent; color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); font-weight: var(--medium); }
+.tabs button span { color: var(--text); font-size: var(--text-body); line-height: var(--leading-body); font-weight: var(--bold); letter-spacing: -.02em; }
+.tabs .active { background: var(--selected); color: var(--inverse); }
+.tabs .active span { color: inherit; }
+.day-area { color: var(--secondary); margin-bottom: var(--space-3); font-size: var(--text-label); line-height: var(--leading-label); }
+.timeline { display: grid; gap: var(--space-3); }
+.slot, .mapcard { min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-large); background: var(--surface); padding: var(--space-3); }
+.slot-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-1) var(--space-2); }
+.time { color: var(--text); font-size: var(--text-caption); line-height: var(--leading-caption); font-weight: var(--semibold); font-variant-numeric: tabular-nums; }
+.slot h2, .maphead h2 { font-size: var(--text-heading); line-height: var(--leading-heading); letter-spacing: -.035em; font-weight: var(--bold); }
+.slot h2 { margin: var(--space-1) 0 var(--space-2); }
+.slot-kind { color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); }
+.choice { display: grid; grid-template-columns: var(--space-11) minmax(0,1fr) auto; align-items: center; gap: var(--space-1); border-top: 1px solid var(--border); padding: var(--space-2) 0; }
 .choice:last-child { padding-bottom: 0; }
-.choice:has(input:checked) .name { color: var(--accent); }
-.pick { display: grid; place-items: center; width: 44px; height: 44px; cursor: pointer; }
-.pick input { width: 20px; height: 20px; margin: 0; accent-color: var(--accent); }
-.pick:has(input:disabled) { cursor: default; }
-.name { display: block; font-size: 15px; font-weight: 740; line-height: 1.3; overflow-wrap: anywhere; }
-.badges { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 7px; margin-top: 4px; }
-.source, .status { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 650; color: var(--muted); }
-.source svg { width: 13px; height: 13px; }
-.source.ai { color: #63468b; }
-.source.human, .status.booked { color: var(--accent); }
-.status.approved-not-booked { color: #785019; }
-.meta, .note { color: var(--muted); font-size: 12px; line-height: 1.45; }
-.meta { display: block; margin-top: 4px; }
-.note { margin-top: 10px; }
-.alert, .risk { color: #73470c; background: #fbefd7; }
-.alert { padding: 9px 11px; border-radius: 10px; }
-.risk { display: inline-block; margin-top: 5px; padding: 3px 6px; border-radius: 6px; font-size: 11px; font-weight: 650; }
-.choice-end { display: flex; flex-direction: column; justify-content: center; }
-.maps, .action { display: inline-flex; justify-content: center; align-items: center; min-height: 44px; border: 0; text-decoration: none; text-align: center; color: var(--accent); font-size: 13px; font-weight: 700; }
-.maps { padding: 0 6px; background: transparent; }
-.action { padding: 8px 13px; border-radius: 99px; background: var(--accent); color: white; }
-.action.alt { background: var(--wash); color: var(--accent); }
-.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.pick { display: grid; place-items: center; width: var(--space-11); min-height: var(--space-11); cursor: pointer; }
+.pick input { appearance: none; width: var(--space-5); height: var(--space-5); margin: 0; border: 1px solid var(--control-border); border-radius: var(--space-1); background: var(--surface); cursor: inherit; }
+.pick input:checked { background: var(--selected) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 4 4L19 6'/%3E%3C/svg%3E") center/var(--space-4) no-repeat; border-color: var(--selected); }
+.pick input:disabled { opacity: .48; cursor: default; }
+.name { display: block; font-size: var(--text-body); line-height: var(--leading-body); font-weight: var(--semibold); overflow-wrap: anywhere; }
+.badges { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); }
+.source, .status { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-caption); line-height: var(--leading-caption); color: var(--secondary); }
+.status.booked, .status.approved-not-booked { font-weight: var(--semibold); color: var(--text); }
+.meta, .note { color: var(--secondary); font-size: var(--text-label); line-height: var(--leading-label); }
+.meta { display: block; margin-top: var(--space-1); }
+.note, .route-note { margin-top: var(--space-2); }
+.alert { background: var(--subtle); padding: var(--space-2) var(--space-3); border-radius: var(--radius-small); color: var(--text); }
+.risk { display: inline-flex; align-items: center; gap: var(--space-1); margin-top: var(--space-1); color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); font-weight: var(--medium); }
+.choice-end { display: flex; }
+.icon-button, .action { display: inline-flex; justify-content: center; align-items: center; gap: var(--space-2); min-height: var(--space-11); border: 0; text-decoration: none; text-align: center; font-size: var(--text-label); line-height: var(--leading-label); font-weight: var(--semibold); border-radius: var(--radius-small); }
+.icon-button { width: var(--space-11); padding: 0; color: var(--text); background: transparent; }
+.icon-button:hover { background: var(--subtle); }
+.topbar .icon-button, .sheet-close { background: var(--subtle); }
+.action { padding: var(--space-2) var(--space-3); background: var(--selected); color: var(--inverse); }
+.action.alt { background: var(--subtle); color: var(--text); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
 .actions .action { flex: 1; }
-.mapcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 15px; }
-.maphead { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.maphead h2 { margin: 0; font-size: 21px; letter-spacing: -.035em; }
-.maphead span, .maphint { color: var(--muted); font-size: 13px; }
-.maphint { line-height: 1.45; margin: 8px 0 10px; }
-.map-frame { width: 100%; height: 265px; display: block; border: 1px solid var(--line); border-radius: 14px; background: var(--wash); }
-.map-list { display: grid; margin-top: 10px; }
-.map-place { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 5px; align-items: center; border-bottom: 1px solid var(--line); }
-.map-place button:first-child { display: flex; align-items: center; gap: 7px; text-align: left; border: 0; border-radius: 8px; background: none; color: var(--ink); font-size: 14px; min-height: 44px; padding: 7px; }
-.map-place button[aria-pressed="true"] { background: var(--wash); color: var(--accent); font-weight: 700; }
-.map-place svg, .dock svg, .share svg { flex: none; width: 19px; height: 19px; }
-.dock { position: fixed; z-index: 1; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; border-top: 1px solid var(--line); background: var(--surface); padding: 7px 18px max(8px, env(safe-area-inset-bottom)); }
-.dock button { display: flex; justify-content: center; align-items: center; gap: 7px; min-height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 700; }
-.dock button[aria-pressed="true"] { background: var(--wash); color: var(--accent); }
-.footer { margin: 17px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
-.place-sheet { position: fixed; inset: auto 0 0; width: min(100%, 540px); max-width: none; max-height: 85vh; margin: 0 auto; padding: 18px 20px max(20px, env(safe-area-inset-bottom)); border: 0; border-radius: 24px 24px 0 0; color: var(--ink); background: var(--surface); }
-.place-sheet::backdrop { background: #14221cab; }
-.sheet-head { display: flex; justify-content: space-between; gap: 8px; }
-.sheet-head h2 { margin: 2px 0 8px; font-size: 25px; letter-spacing: -.04em; }
-.sheet-close { border: 0; border-radius: 50%; min-width: 44px; min-height: 44px; background: var(--wash); color: var(--ink); font-size: 22px; }
-.sheet-copy, .sheet-address { margin: 8px 0; font-size: 14px; line-height: 1.5; }
-.sheet-copy { color: var(--muted); }
+.maphead { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
+.maphead span, .maphint, .route-note { color: var(--secondary); font-size: var(--text-label); line-height: var(--leading-label); }
+.maphint { margin: var(--space-2) 0 var(--space-3); }
+.map-frame { width: 100%; height: 264px; display: block; border: 1px solid var(--border); border-radius: var(--radius-medium); background: var(--subtle); }
+.map-list { margin-top: var(--space-2); }
+.map-place { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--space-1); align-items: center; border-bottom: 1px solid var(--border); padding: var(--space-2) 0; }
+.map-place-name { display: grid; gap: var(--space-1); min-width: 0; }
+.map-place-name button { text-align: left; min-height: var(--space-11); border: 0; border-radius: var(--radius-small); padding: var(--space-2); background: none; color: var(--text); font-weight: var(--semibold); font-size: var(--text-body); line-height: var(--leading-body); }
+.map-place-name button[aria-pressed="true"] { background: var(--subtle); }
+.map-address { padding: 0 var(--space-2); color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); }
+.map-place-links { display: flex; }
+.dock { position: fixed; z-index: 1; inset: auto 0 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-2); border-top: 1px solid var(--border); background: var(--surface); padding: var(--space-2) var(--space-4) calc(var(--space-2) + env(safe-area-inset-bottom)); }
+.dock button { display: flex; justify-content: center; align-items: center; gap: var(--space-2); min-height: var(--space-11); border: 0; border-radius: var(--radius-small); background: transparent; color: var(--secondary); font-size: var(--text-label); line-height: var(--leading-label); font-weight: var(--semibold); }
+.dock button[aria-pressed="true"] { background: var(--subtle); color: var(--text); }
+.footer { margin-top: var(--space-4); color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); }
+.place-sheet { position: fixed; inset: auto 0 0; width: min(100%, 544px); max-width: none; max-height: 85dvh; margin: 0 auto; padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom)); border: 0; border-radius: var(--radius-sheet) var(--radius-sheet) 0 0; color: var(--text); background: var(--surface); }
+.place-sheet::backdrop { background: var(--overlay); }
+.sheet-head { display: flex; justify-content: space-between; align-items: start; gap: var(--space-2); }
+.sheet-head h2 { font-size: var(--text-title); line-height: var(--leading-title); letter-spacing: -.04em; }
+.sheet-copy, .sheet-address { margin-top: var(--space-2); font-size: var(--text-label); line-height: var(--leading-label); }
+.sheet-copy { color: var(--secondary); }
 .sheet-copy:empty { display: none; }
 body:has(.place-sheet[open]) { overflow: hidden; }
-[hidden] { display: none !important; }
 @media (max-width: 759px) {
   .app[data-view="timeline"] .mapcard, .app[data-view="map"] .day-panel { display: none; }
 }
 @media (min-width: 760px) {
-  .app { padding: 0 26px 36px; }
-  .trip { margin-top: 28px; padding: 32px; }
-  .layout { display: grid; grid-template-columns: minmax(0,1.18fr) minmax(0,1fr); align-items: start; gap: 22px; }
-  .mapcard { grid-column: 2; grid-row: 1; }
-  .day-panel { grid-column: 1; grid-row: 1; }
-  .slot { padding: 17px; }
-  .map-frame { height: 290px; }
+  .app { padding: 0 var(--space-6) var(--space-8); }
+  .topbar { padding: var(--space-6) 0 var(--space-4); }
+  .layout { display: grid; grid-template-columns: minmax(0,1.18fr) minmax(0,1fr); align-items: start; gap: var(--space-6); }
+  .slot, .mapcard { padding: var(--space-4); }
+  .map-frame { height: 288px; }
   .dock { display: none; }
-  .place-sheet { inset: 0; margin: auto; border-radius: 24px; }
+  .place-sheet { inset: 0; margin: auto; border-radius: var(--radius-sheet); }
 }
-.map-place-name { display: grid; gap: 3px; padding: 7px 0; min-width: 0; }
-.map-place .map-place-name button { justify-content: start; }
-.map-address { padding: 0 7px; color: var(--muted); font-size: 12px; line-height: 1.35; }
-.route-note { margin: 12px 0 0; font-size: 13px; line-height: 1.5; }
-.map-place-links { display: grid; justify-items: end; }
   </style>
 </head>
 <body>
+  <!-- Tabler Icons v3.34.1
+MIT License
+
+Copyright (c) 2020-2024 Paweł Kuna
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+  -->
+  <svg class="icon-library" aria-hidden="true" focusable="false">
+    <symbol id="tabler-alert-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+  <path d="M12 8v4" />
+  <path d="M12 16h.01" /></symbol>
+    <symbol id="tabler-external-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" />
+  <path d="M11 13l9 -9" />
+  <path d="M15 4h5v5" /></symbol>
+    <symbol id="tabler-info-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+  <path d="M12 9h.01" />
+  <path d="M11 12h1v4h1" /></symbol>
+    <symbol id="tabler-list-details" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h8" />
+  <path d="M13 9h5" />
+  <path d="M13 15h8" />
+  <path d="M13 19h5" />
+  <path d="M3 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+  <path d="M3 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /></symbol>
+    <symbol id="tabler-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+  <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></symbol>
+    <symbol id="tabler-navigation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18.5l7.265 2.463c.196 .077 .42 .032 .57 -.116a.548 .548 0 0 0 .134 -.572l-7.969 -17.275l-7.97 17.275c-.07 .2 -.017 .424 .135 .572c.15 .148 .374 .193 .57 .116l7.265 -2.463" /></symbol>
+    <symbol id="tabler-photo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 8h.01" />
+  <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" />
+  <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" />
+  <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3" /></symbol>
+    <symbol id="tabler-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+  <path d="M18 6m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+  <path d="M18 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+  <path d="M8.7 10.7l6.6 -3.4" />
+  <path d="M8.7 13.3l6.6 3.4" /></symbol>
+    <symbol id="tabler-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6z" /></symbol>
+    <symbol id="tabler-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></symbol>
+    <symbol id="tabler-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-12 12" />
+  <path d="M6 6l12 12" /></symbol>
+  </svg>
   <main class="app" data-view="timeline">
-    <header class="trip">
-      <div>
-        <p class="eyebrow">21–23 tháng 11, 2026</p>
-        <h1>Đà Lạt Escape</h1>
-        <p class="sub">Team 6 · 6 người · 3 ngày 2 đêm</p>
-      </div>
-      <button id="share" class="action alt share" type="button" aria-label="Chia sẻ lịch trình" title="Chia sẻ lịch trình"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M6 11H4v10h16V11h-2"/></svg></button>
+    <header class="topbar">
+      <div><h1>21–23 tháng 11</h1><p class="sub">2026 · 6 người</p></div>
+      <button id="share" class="icon-button" type="button" aria-label="Chia sẻ lịch trình" title="Chia sẻ lịch trình"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-share"></use></svg></button>
     </header>
     <nav class="tabs" id="tabs" aria-label="Ngày trong lịch trình"></nav>
     <div class="layout">
@@ -153,16 +219,16 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         <div id="route-actions"></div>
       </section>
     </div>
-    <p class="footer">Giá và độ đông ước tính. Ga49 và Airbnb là hai điểm đã đặt. Ảnh Hồ Xuân Hương của <a href="https://commons.wikimedia.org/wiki/File:Da_Lat_-_Xuan_Huong_Lake.jpg">P. Hughes</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>, cắt khung).</p>
+    <p class="footer">Giá và độ đông ước tính. Ga49 và Airbnb là hai điểm đã đặt. </p>
     <nav class="dock" aria-label="Chế độ xem">
-      <button type="button" data-view-target="timeline" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Lịch trình</button>
-      <button type="button" data-view-target="map" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M19 10c0 5-7 10-7 10s-7-5-7-10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>Bản đồ</button>
+      <button type="button" data-view-target="timeline" aria-pressed="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-list-details"></use></svg>Lịch trình</button>
+      <button type="button" data-view-target="map" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-map-pin"></use></svg>Bản đồ</button>
     </nav>
   </main>
   <dialog id="place-sheet" class="place-sheet" aria-labelledby="sheet-title">
     <div class="sheet-head">
       <h2 id="sheet-title"></h2>
-      <form method="dialog"><button class="sheet-close" aria-label="Đóng chi tiết" autofocus>×</button></form>
+      <form method="dialog"><button class="icon-button sheet-close" aria-label="Đóng chi tiết" title="Đóng chi tiết" autofocus><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-x"></use></svg></button></form>
     </div>
     <p id="sheet-meta" class="sheet-copy"></p>
     <p id="sheet-address" class="sheet-address"></p>
@@ -172,7 +238,7 @@ body:has(.place-sheet[open]) { overflow: hidden; }
     <p id="sheet-location" class="sheet-copy"></p>
     <div class="actions">
       <a id="sheet-directions" class="action" target="_blank" rel="noopener">Chỉ đường</a>
-      <a id="sheet-photos" class="action alt" target="_blank" rel="noopener">Ảnh trên Maps</a>
+      <a id="sheet-photos" class="action alt" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-photo"></use></svg>Ảnh trên Maps</a>
     </div>
   </dialog>
   <script id="plan-data" type="application/json">
@@ -886,10 +952,8 @@ const crowdLabels = {
   "high-sunset":"Dễ đông lúc hoàng hôn",
   "medium-uncertain":"Mức đông vừa · chưa chắc chắn"
 };
-const sourceIcons = {
-  human:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10" cy="6" r="3"/><path d="M4 17v-1a6 6 0 0 1 12 0v1"/></svg>',
-  ai:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="m8 2 1.6 4.4L14 8l-4.4 1.6L8 14l-1.6-4.4L2 8l4.4-1.6L8 2Zm7 9 1 2.8 2.8 1L16 16l-1 2.8-1-2.8-2.8-1.2 2.8-1 1-2.8Z"/></svg>'
-};
+const icon = name => `<svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-${name}"></use></svg>`;
+const sourceIcons = {human:"user", ai:"sparkles"};
 const locationNotes = {
   ga49: "Lịch ghi 55 Hùng Vương. Maps trả về quán cà phê ở 55/5 Hùng Vương. Cần link pin từ Ga49 để xác nhận chỗ đã đặt.",
   airbnb: "Địa chỉ đặt phòng là 64/6 Đào Duy Từ. Maps chỉ xác nhận được số 64. Hỏi chủ nhà pin lối vào 64/6."
@@ -967,7 +1031,7 @@ function openPlace(id) {
   document.getElementById("sheet-location").textContent = locationNotes[place.id] ?? "";
   const directions = document.getElementById("sheet-directions");
   directions.href = placeLink(place);
-  directions.textContent = place.google ? "Chỉ đường" : "Tra địa chỉ";
+  directions.innerHTML = place.google ? icon("navigation") + "Chỉ đường" : icon("map-pin") + "Tra địa chỉ";
   const photos = document.getElementById("sheet-photos");
   photos.href = mapsSearch(place);
   photos.hidden = !place.google;
@@ -985,15 +1049,15 @@ function renderChoice(slot, id) {
     <label for="${inputId}">
       <span class="name">${name}</span>
       <span class="badges">
-        <span class="source ${place.source}">${sourceIcons[place.source]}${escapeHtml(plan.sourceLegend[place.source].label)}</span>
+        <span class="source ${place.source}">${icon(sourceIcons[place.source])}${escapeHtml(plan.sourceLegend[place.source].label)}</span>
         <span class="status ${status}">${statusLabels[status]}</span>
       </span>
       <span class="meta">${priceLabel(place.priceEstimate)}${place.priceEstimate ? " / người" : ""}</span>
-      ${risk ? '<span class="risk">' + risk + '</span>' : ""}
+      ${risk ? '<span class="risk small-icon">' + icon("alert-circle") + risk + '</span>' : ""}
     </label>
     <div class="choice-end">
-      <button type="button" class="maps" data-details="${id}" aria-label="Chi tiết ${name}">Chi tiết</button>
-      <a class="maps" target="_blank" rel="noopener" href="${escapeHtml(mapsSearch(place))}" aria-label="Google Maps: ${name}">Maps</a>
+      <button type="button" class="icon-button" data-details="${id}" aria-label="Chi tiết ${name}" title="Chi tiết"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-info-circle"></use></svg></button>
+      <a class="icon-button" target="_blank" rel="noopener" href="${escapeHtml(mapsSearch(place))}" aria-label="Google Maps: ${name}" title="Mở Google Maps"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-external-link"></use></svg></a>
     </div>
   </div>`;
 }
@@ -1054,7 +1118,7 @@ function renderRoute(stops) {
     stops.length > 5 ? "Lộ trình được chia chặng để Google Maps trên điện thoại nhận đủ các điểm dừng." : "";
   actions.innerHTML = (note ? `<p class="route-note alert">${escapeHtml(note)}</p>` : "") +
     segments.map((items, i) =>
-      `<div class="actions"><a class="action" target="_blank" rel="noopener" href="${escapeHtml(mapsDirections(items))}">${complete ?
+      `<div class="actions"><a class="action" target="_blank" rel="noopener" href="${escapeHtml(mapsDirections(items))}">${icon("navigation")}${complete ?
         "Lộ trình cả ngày" : "Chặng " + (i + 1) + " · " + escapeHtml(items[0].name) + " → " + escapeHtml(items.at(-1).name)}</a></div>`
     ).join("");
 }
@@ -1080,8 +1144,8 @@ function renderMap(slots) {
         <span class="map-address">${escapeHtml(place.google?.address ?? "Cần xác nhận pin")}</span>
       </div>
       <div class="map-place-links">
-        <a class="maps" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}">${place.google ? "Chỉ đường" : "Tra địa chỉ"}</a>
-        <button type="button" class="maps" data-map-details="${place.id}" aria-label="Chi tiết ${escapeHtml(place.name)}">Chi tiết</button>
+        <a class="icon-button" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}" aria-label="${place.google ? "Chỉ đường" : "Tra địa chỉ"}: ${escapeHtml(place.name)}" title="${place.google ? "Chỉ đường" : "Tra địa chỉ"}">${icon(place.google ? "navigation" : "map-pin")}</a>
+        <button type="button" class="icon-button" data-map-details="${place.id}" aria-label="Chi tiết ${escapeHtml(place.name)}" title="Chi tiết"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-info-circle"></use></svg></button>
       </div>
     </div>`
   ).join("");
