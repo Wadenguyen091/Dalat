@@ -3,207 +3,156 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#f5f5f7">
+  <meta name="theme-color" content="#faf9f5">
   <title>Đà Lạt Escape · Team 6</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
-    :root {
-      color-scheme: light;
-      --canvas: #f5f5f7;
-      --surface: #fff;
-      --ink: #1d1d1f;
-      --muted: #64646c;
-      --accent: #0066cc;
-      --line: #e6e6eb;
-      --selected: #edf5ff;
-      --radius: 24px;
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--canvas); color: var(--ink); }
-    button, input { font: inherit; }
-    button, a, input { -webkit-tap-highlight-color: transparent; }
-    button, .choice { cursor: pointer; }
-    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-    .app { width: min(100%, 1120px); margin: auto; padding: 32px 16px 40px; }
-    .trip { margin-bottom: 24px; }
-    .eyebrow { margin: 0; color: var(--accent); font-size: 14px; font-weight: 700; }
-    h1 { margin: 5px 0 6px; font-size: clamp(38px, 8vw, 68px); letter-spacing: -.058em; line-height: 1.04; }
-    .sub { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
-    .tabs {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 4px;
-      border-radius: 16px;
-      background: #e8e8ed;
-      padding: 4px;
-      margin: 0 0 16px;
-    }
-    .tabs button {
-      min-height: 52px;
-      border: 0;
-      border-radius: 12px;
-      background: transparent;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 650;
-    }
-    .tabs button span { display: block; font-size: 15px; color: var(--ink); }
-    .tabs .active { background: var(--surface); box-shadow: 0 1px 4px #0002; }
-    .tabs .active span { color: var(--accent); }
-    .layout { display: grid; gap: 16px; align-items: start; min-width: 0; }
-    .mapcard, .slot { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); min-width: 0; }
-    .mapcard { padding: 14px; }
-    .maphead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 2px 12px; }
-    .maphead h2 { margin: 0; font-size: 17px; letter-spacing: -.02em; }
-    .maphead span { color: var(--muted); font-size: 13px; white-space: nowrap; }
-    #map { height: clamp(195px, 31vh, 280px); border-radius: 15px; background: #e8edf1; isolation: isolate; }
-    .actions { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 8px; margin-top: 12px; }
-    .action {
-      display: grid;
-      place-items: center;
-      min-height: 44px;
-      border: 0;
-      border-radius: 999px;
-      padding: 8px;
-      background: var(--accent);
-      color: #fff;
-      text-decoration: none;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 650;
-    }
-    .action.alt { background: var(--selected); color: var(--accent); }
-    .timeline { display: grid; gap: 12px; }
-    .slot { padding: 16px; }
-    .time { color: var(--muted); font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; }
-    .slot h2 { margin: 4px 0 12px; font-size: 21px; letter-spacing: -.035em; line-height: 1.2; }
-    .choice {
-      display: grid;
-      grid-template-columns: 22px minmax(0, 1fr) auto;
-      align-items: start;
-      gap: 10px;
-      min-height: 56px;
-      margin-top: 5px;
-      padding: 10px 8px 4px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-    }
-    .choice:has(input:checked) { border-color: #c6dfff; background: var(--selected); }
-    .choice input { width: 20px; height: 20px; margin: 0; accent-color: var(--accent); }
-    .choice input:disabled { opacity: .65; }
-    .name { font-size: 15px; font-weight: 700; line-height: 1.35; }
-    .meta, .note { color: var(--muted); font-size: 13px; line-height: 1.4; }
-    .meta { margin-top: 2px; }
-    .price { color: var(--ink); font-size: 13px; font-weight: 650; white-space: nowrap; }
-    .maps { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent); font-size: 13px; font-weight: 650; text-decoration: none; }
-    .maps:hover { text-decoration: underline; }
-    .note { margin-top: 10px; }
-    .alert { color: #744c13; background: #fff5df; padding: 10px 12px; border-radius: 10px; }
-    .pin { width: 29px; height: 29px; display: grid; place-items: center; border: 2px solid #fff; border-radius: 50%; background: var(--accent); color: white; font-weight: 750; box-shadow: 0 2px 8px #0004; }
-    .footer { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 16px 0 0; }
-    @media (min-width: 760px) {
-      .app { padding: 48px 24px; }
-      .layout { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 20px; }
-      .mapcard { position: sticky; top: 20px; }
-      #map { height: 420px; }
-      .slot { padding: 20px; }
-    }
-    :root {
-      --accent: #005b50;
-      --canvas: #f4f6f3;
-      --selected: #edf7f2;
-      --line: #dce5de;
-    }
-    .trip {
-      margin-bottom: 16px;
-      padding: 21px 18px;
-      background: #123f37;
-      color: white;
-      border-radius: var(--radius);
-    }
-    .trip .eyebrow { color: #c1e7d6; }
-    .trip .sub { color: #e0eee7; }
-    .app { padding-top: 16px; }
-    .tabs { background: #e7ede7; }
-    .maphead { align-items: baseline; margin-bottom: 8px; }
-    .maphint { margin: 0 2px 10px; color: var(--muted); font-size: 13px; }
-    #map { height: 180px; }
-    .slot { border-radius: 20px; }
-    .time { display: inline-block; background: #eef3ef; border-radius: 8px; padding: 5px 8px; }
-    .slot h2 { margin-top: 8px; }
-    .choice { grid-template-columns: 22px minmax(0, 1fr) auto; padding: 10px 8px; cursor: auto; }
-    .choice label { cursor: pointer; }
-    .choice label .name, .choice label .meta { display: block; }
-    .choice input { margin-top: 3px; }
-    .choice:has(input:checked) { border-color: #b1d5c3; }
-    .maps { border: 0; background: transparent; padding: 0 5px; justify-content: center; }
-    .choice-end { display: grid; justify-items: end; }
-    .risk { display: inline-block; margin-top: 6px; padding: 4px 8px; border-radius: 999px; background: #fff0cf; color: #704500; font-size: 12px; font-weight: 700; }
-    .pin { width: 36px; height: 36px; }
-    .place-sheet {
-      position: fixed;
-      inset: auto 0 0;
-      width: min(100%, 540px);
-      max-width: none;
-      max-height: 85vh;
-      margin: 0 auto;
-      padding: 18px 20px max(20px, env(safe-area-inset-bottom));
-      border: 0;
-      border-radius: 24px 24px 0 0;
-      color: var(--ink);
-      background: var(--surface);
-    }
-    .place-sheet::backdrop { background: #101c19a6; }
-    .sheet-head { display: flex; align-items: start; justify-content: space-between; gap: 8px; }
-    .sheet-head h2 { margin: 2px 0 8px; font-size: 25px; letter-spacing: -.04em; }
-    .sheet-close { border: 0; border-radius: 50%; min-width: 44px; min-height: 44px; background: #edf2ef; color: var(--ink); font-size: 22px; }
-    .sheet-copy { margin: 8px 0; color: var(--muted); line-height: 1.5; }
-    .sheet-address { margin: 8px 0; line-height: 1.45; }
-    body:has(.place-sheet[open]) { overflow: hidden; }
-    @media (min-width: 760px) {
-      .app { padding-top: 32px; }
-      .trip { padding: 30px; }
-      #map { height: 390px; }
-      .place-sheet { inset: 0; margin: auto; border-radius: 24px; }
-    }
-    .day-area { margin: 2px 0 10px; color: var(--muted); font-size: 14px; }
-    .slot-kind { margin: -5px 0 8px; color: var(--muted); font-size: 13px; }
-    .badges { display: flex; flex-wrap: wrap; gap: 4px 7px; margin: 4px 0; }
-    .source, .status { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700; color: var(--muted); }
-    .source svg { width: 14px; height: 14px; }
-    .source.ai { color: #6845a0; }
-    .source.human, .status.booked { color: var(--accent); }
-    .status.approved-not-booked { color: #795013; }
-    .choice .maps { min-width: 44px; }
-    .sheet-copy:empty { display: none; }
+:root {
+  color-scheme: light;
+  --paper: #faf9f5;
+  --surface: #fff;
+  --ink: #182923;
+  --muted: #53625a;
+  --accent: #1e634d;
+  --wash: #eaf3ed;
+  --line: #e0e6df;
+  --radius: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); }
+button, input { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid #367b66; outline-offset: 3px; }
+.app { max-width: 1090px; margin: auto; padding: 0 18px 100px; }
+.trip {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 8px;
+  align-items: start;
+  margin: 18px 0 14px;
+  padding: 25px 16px;
+  border-radius: 23px;
+  color: white;
+  background-color: #1b3b2d;
+  background-image: linear-gradient(90deg, #142c20 5%, #142c20c9 48%, #142c2066), url("https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Da_Lat_-_Xuan_Huong_Lake.jpg/960px-Da_Lat_-_Xuan_Huong_Lake.jpg");
+  background-size: cover;
+  background-position: center 52%;
+}
+.trip .eyebrow, .trip .sub { color: #e5efe8; }
+.eyebrow { margin: 0 0 7px; color: var(--accent); font-size: 13px; font-weight: 750; }
+h1 { margin: 0; font-size: clamp(32px, 8.2vw, 62px); letter-spacing: -.065em; line-height: 1.05; }
+.sub { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
+.share { margin-top: 6px; }
+.tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin: 0 0 21px; }
+.tabs button { display: grid; gap: 3px; min-height: 62px; place-content: center; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 650; }
+.tabs button span { color: var(--ink); font-size: 19px; font-weight: 780; letter-spacing: -.035em; }
+.tabs .active { background: var(--accent); border-color: var(--accent); color: #e0f4e6; }
+.tabs .active span { color: white; }
+.day-area { color: var(--muted); margin: 0 0 14px; font-size: 13px; line-height: 1.5; }
+.timeline { display: grid; gap: 16px; }
+.slot { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 15px; }
+.slot-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
+.time { color: var(--accent); font-size: 12px; font-weight: 750; font-variant-numeric: tabular-nums; }
+.slot h2 { margin: 4px 0 9px; font-size: 21px; letter-spacing: -.04em; line-height: 1.18; }
+.slot-kind { margin: 0; color: var(--muted); font-size: 12px; }
+.choice { display: grid; grid-template-columns: 44px minmax(0,1fr) auto; align-items: center; gap: 5px; border-top: 1px solid var(--line); padding: 7px 0; }
+.choice:last-child { padding-bottom: 0; }
+.choice:has(input:checked) .name { color: var(--accent); }
+.pick { display: grid; place-items: center; width: 44px; height: 44px; cursor: pointer; }
+.pick input { width: 20px; height: 20px; margin: 0; accent-color: var(--accent); }
+.pick:has(input:disabled) { cursor: default; }
+.name { display: block; font-size: 15px; font-weight: 740; line-height: 1.3; overflow-wrap: anywhere; }
+.badges { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 7px; margin-top: 4px; }
+.source, .status { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 650; color: var(--muted); }
+.source svg { width: 13px; height: 13px; }
+.source.ai { color: #63468b; }
+.source.human, .status.booked { color: var(--accent); }
+.status.approved-not-booked { color: #785019; }
+.meta, .note { color: var(--muted); font-size: 12px; line-height: 1.45; }
+.meta { display: block; margin-top: 4px; }
+.note { margin-top: 10px; }
+.alert, .risk { color: #73470c; background: #fbefd7; }
+.alert { padding: 9px 11px; border-radius: 10px; }
+.risk { display: inline-block; margin-top: 5px; padding: 3px 6px; border-radius: 6px; font-size: 11px; font-weight: 650; }
+.choice-end { display: flex; flex-direction: column; justify-content: center; }
+.maps, .action { display: inline-flex; justify-content: center; align-items: center; min-height: 44px; border: 0; text-decoration: none; text-align: center; color: var(--accent); font-size: 13px; font-weight: 700; }
+.maps { padding: 0 6px; background: transparent; }
+.action { padding: 8px 13px; border-radius: 99px; background: var(--accent); color: white; }
+.action.alt { background: var(--wash); color: var(--accent); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.actions .action { flex: 1; }
+.mapcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 15px; }
+.maphead { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.maphead h2 { margin: 0; font-size: 21px; letter-spacing: -.035em; }
+.maphead span, .maphint { color: var(--muted); font-size: 13px; }
+.maphint { line-height: 1.45; margin: 8px 0 10px; }
+.map-frame { width: 100%; height: 265px; display: block; border: 1px solid var(--line); border-radius: 14px; background: var(--wash); }
+.map-list { display: grid; margin-top: 10px; }
+.map-place { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 5px; align-items: center; border-bottom: 1px solid var(--line); }
+.map-place button:first-child { display: flex; align-items: center; gap: 7px; text-align: left; border: 0; border-radius: 8px; background: none; color: var(--ink); font-size: 14px; min-height: 44px; padding: 7px; }
+.map-place button[aria-pressed="true"] { background: var(--wash); color: var(--accent); font-weight: 700; }
+.map-place svg, .dock svg, .share svg { flex: none; width: 19px; height: 19px; }
+.dock { position: fixed; z-index: 1; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; border-top: 1px solid var(--line); background: var(--surface); padding: 7px 18px max(8px, env(safe-area-inset-bottom)); }
+.dock button { display: flex; justify-content: center; align-items: center; gap: 7px; min-height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 700; }
+.dock button[aria-pressed="true"] { background: var(--wash); color: var(--accent); }
+.footer { margin: 17px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.place-sheet { position: fixed; inset: auto 0 0; width: min(100%, 540px); max-width: none; max-height: 85vh; margin: 0 auto; padding: 18px 20px max(20px, env(safe-area-inset-bottom)); border: 0; border-radius: 24px 24px 0 0; color: var(--ink); background: var(--surface); }
+.place-sheet::backdrop { background: #14221cab; }
+.sheet-head { display: flex; justify-content: space-between; gap: 8px; }
+.sheet-head h2 { margin: 2px 0 8px; font-size: 25px; letter-spacing: -.04em; }
+.sheet-close { border: 0; border-radius: 50%; min-width: 44px; min-height: 44px; background: var(--wash); color: var(--ink); font-size: 22px; }
+.sheet-copy, .sheet-address { margin: 8px 0; font-size: 14px; line-height: 1.5; }
+.sheet-copy { color: var(--muted); }
+.sheet-copy:empty { display: none; }
+body:has(.place-sheet[open]) { overflow: hidden; }
+[hidden] { display: none !important; }
+@media (max-width: 759px) {
+  .app[data-view="timeline"] .mapcard, .app[data-view="map"] .day-panel { display: none; }
+}
+@media (min-width: 760px) {
+  .app { padding: 0 26px 36px; }
+  .trip { margin-top: 28px; padding: 32px; }
+  .layout { display: grid; grid-template-columns: minmax(0,1.18fr) minmax(0,1fr); align-items: start; gap: 22px; }
+  .mapcard { grid-column: 2; grid-row: 1; }
+  .day-panel { grid-column: 1; grid-row: 1; }
+  .slot { padding: 17px; }
+  .map-frame { height: 290px; }
+  .dock { display: none; }
+  .place-sheet { inset: 0; margin: auto; border-radius: 24px; }
+}
   </style>
 </head>
 <body>
-  <main class="app">
+  <main class="app" data-view="timeline">
     <header class="trip">
-      <p class="eyebrow">21–23 tháng 11, 2026</p>
-      <h1>Đà Lạt Escape</h1>
-      <p class="sub">Team 6 · 6 người · 3 ngày 2 đêm</p>
+      <div>
+        <p class="eyebrow">21–23 tháng 11, 2026</p>
+        <h1>Đà Lạt Escape</h1>
+        <p class="sub">Team 6 · 6 người · 3 ngày 2 đêm</p>
+      </div>
+      <button id="share" class="action alt share" type="button" aria-label="Chia sẻ lịch trình" title="Chia sẻ lịch trình"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M6 11H4v10h16V11h-2"/></svg></button>
     </header>
     <nav class="tabs" id="tabs" aria-label="Ngày trong lịch trình"></nav>
     <div class="layout">
-      <section class="mapcard" aria-labelledby="map-title">
-        <div class="maphead"><h2 id="map-title">Địa điểm đã chọn</h2><span id="count" aria-live="polite"></span></div>
-        <p id="maphint" class="maphint" aria-live="polite">Chạm pin để xem chi tiết và chỉ đường.</p>
-        <div id="map" aria-label="Bản đồ địa điểm đã chọn"></div>
-        <div class="actions">
-          <a id="go" class="action" target="_blank" rel="noopener">Lộ trình cả ngày</a>
-          <button id="share" class="action alt" type="button">Chia sẻ</button>
-        </div>
-      </section>
-      <section aria-label="Lịch trình trong ngày">
+      <section class="day-panel" aria-label="Lịch trình trong ngày">
         <p id="area" class="day-area"></p>
         <div class="timeline" id="timeline"></div>
       </section>
+      <section class="mapcard" aria-labelledby="map-title">
+        <div class="maphead"><h2 id="map-title">Google Maps</h2><span id="count" aria-live="polite"></span></div>
+        <p id="maphint" class="maphint" aria-live="polite"></p>
+        <iframe id="map" class="map-frame" title="Google Maps" referrerpolicy="no-referrer-when-downgrade" hidden></iframe>
+        <div id="map-list" class="map-list"></div>
+        <div class="actions"><a id="go" class="action" target="_blank" rel="noopener">Mở Google Maps</a></div>
+      </section>
     </div>
-    <p class="footer">Giá ước tính theo người. Độ đông và pin chỉ để tham khảo. Ga49 và Airbnb là hai điểm đã đặt.</p>
+    <p class="footer">Giá và độ đông ước tính. Ga49 và Airbnb là hai điểm đã đặt. Ảnh Hồ Xuân Hương của <a href="https://commons.wikimedia.org/wiki/File:Da_Lat_-_Xuan_Huong_Lake.jpg">P. Hughes</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>, cắt khung).</p>
+    <nav class="dock" aria-label="Chế độ xem">
+      <button type="button" data-view-target="timeline" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Lịch trình</button>
+      <button type="button" data-view-target="map" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M19 10c0 5-7 10-7 10s-7-5-7-10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>Bản đồ</button>
+    </nav>
   </main>
   <dialog id="place-sheet" class="place-sheet" aria-labelledby="sheet-title">
     <div class="sheet-head">
@@ -221,7 +170,6 @@
       <a id="sheet-photos" class="action alt" target="_blank" rel="noopener">Ảnh trên Maps</a>
     </div>
   </dialog>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script id="plan-data" type="application/json">
 {
   "version": "5.0",
@@ -262,11 +210,7 @@
       "category": "rest",
       "mapQuery": "Ga49 55 Hùng Vương Đà Lạt",
       "priceEstimate": null,
-      "status": "booked",
-      "coordinates": [
-        11.948,
-        108.47
-      ]
+      "status": "booked"
     },
     {
       "id": "airbnb",
@@ -275,11 +219,7 @@
       "category": "stay",
       "mapQuery": "64/6 Đào Duy Từ Đà Lạt",
       "priceEstimate": null,
-      "status": "booked",
-      "coordinates": [
-        11.926,
-        108.429
-      ]
+      "status": "booked"
     },
     {
       "id": "banhcan-lanh",
@@ -319,11 +259,7 @@
       "source": "human",
       "category": "lunch",
       "mapQuery": "42 Phan Chu Trinh Đà Lạt",
-      "priceEstimate": null,
-      "coordinates": [
-        11.9511723,
-        108.4654011
-      ]
+      "priceEstimate": null
     },
     {
       "id": "ku-boc",
@@ -347,8 +283,7 @@
       "source": "human",
       "category": "lunch",
       "mapQuery": "4 Trần Hưng Đạo Đà Lạt",
-      "priceEstimate": null,
-      "coordinates": [11.937341, 108.447210]
+      "priceEstimate": null
     },
     {
       "id": "thiet-168",
@@ -356,8 +291,7 @@
       "source": "human",
       "category": "lunch",
       "mapQuery": "168 Phan Đình Phùng Đà Lạt",
-      "priceEstimate": null,
-      "coordinates": [11.9476483, 108.4358889]
+      "priceEstimate": null
     },
     {
       "id": "bunbo-songhuong",
@@ -379,11 +313,7 @@
       },
       "status": "approved-not-booked",
       "crowdRisk": "high-weekend-evening",
-      "notes": "Approved by user; acoustic and table for 6 require confirmation",
-      "coordinates": [
-        11.947,
-        108.472
-      ]
+      "notes": "Approved by user; acoustic and table for 6 require confirmation"
     },
     {
       "id": "thenh-thang",
@@ -395,11 +325,7 @@
         "min": 50000,
         "max": 70000
       },
-      "crowdRisk": "medium-high-weekend",
-      "coordinates": [
-        11.96,
-        108.487
-      ]
+      "crowdRisk": "medium-high-weekend"
     },
     {
       "id": "mountain-chill",
@@ -411,11 +337,7 @@
         "min": 55000,
         "max": 80000
       },
-      "crowdRisk": "high-sunset",
-      "coordinates": [
-        11.958,
-        108.488
-      ]
+      "crowdRisk": "high-sunset"
     },
     {
       "id": "rung-na-uy",
@@ -427,11 +349,7 @@
         "min": 45000,
         "max": 85000
       },
-      "crowdRisk": "medium-uncertain",
-      "coordinates": [
-        11.967,
-        108.505
-      ]
+      "crowdRisk": "medium-uncertain"
     },
     {
       "id": "cheo-veooo",
@@ -443,11 +361,7 @@
         "min": 45000,
         "max": 70000
       },
-      "crowdRisk": "high-sunset",
-      "coordinates": [
-        11.957,
-        108.484
-      ]
+      "crowdRisk": "high-sunset"
     },
     {
       "id": "reo",
@@ -460,11 +374,7 @@
         "max": 250000
       },
       "crowdRisk": "unknown",
-      "notes": "SUP estimate only; reserve 6 places and check weather",
-      "coordinates": [
-        11.894,
-        108.427
-      ]
+      "notes": "SUP estimate only; reserve 6 places and check weather"
     },
     {
       "id": "seen",
@@ -476,11 +386,7 @@
         "min": 40000,
         "max": 80000
       },
-      "crowdRisk": "unknown",
-      "coordinates": [
-        11.896,
-        108.431
-      ]
+      "crowdRisk": "unknown"
     },
     {
       "id": "thong",
@@ -492,11 +398,7 @@
         "min": 40000,
         "max": 80000
       },
-      "crowdRisk": "unknown",
-      "coordinates": [
-        11.917,
-        108.447
-      ]
+      "crowdRisk": "unknown"
     },
     {
       "id": "miet",
@@ -505,11 +407,7 @@
       "category": "forest-cafe",
       "mapQuery": "Miết Miết Đà Lạt",
       "priceEstimate": null,
-      "crowdRisk": "unknown",
-      "coordinates": [
-        11.918,
-        108.448
-      ]
+      "crowdRisk": "unknown"
     },
     {
       "id": "la-viet",
@@ -521,11 +419,7 @@
         "min": 30000,
         "max": 75000
       },
-      "crowdRisk": "unknown",
-      "coordinates": [
-        11.953,
-        108.438
-      ]
+      "crowdRisk": "unknown"
     },
     {
       "id": "hidden-land",
@@ -908,14 +802,36 @@ const mapsDirections = query => "https://www.google.com/maps/dir/?api=1&destinat
 const placeQuery = place => place.mapQuery.toLocaleLowerCase("vi").includes(place.name.toLocaleLowerCase("vi"))
   ? place.mapQuery : place.name + ", " + place.mapQuery;
 const placeSheet = document.getElementById("place-sheet");
-const mapCenter = [11.94,108.45];
-const map = L.map("map", {scrollWheelZoom:false, zoomControl:false}).setView(mapCenter, 12);
-L.control.zoom({position:"bottomright"}).addTo(map);
-L.tileLayer("https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
-  maxZoom:18,
-  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://www.hotosm.org/">HOT</a> · <a href="https://openstreetmap.fr/">OSM France</a>'
-}).addTo(map);
-const layer = L.layerGroup().addTo(map);
+const app = document.querySelector(".app");
+const desktop = matchMedia("(min-width: 760px)");
+const mapFrame = document.getElementById("map");
+let focusedPlaceId;
+const scrollByView = {timeline:0, map:0};
+
+function syncMapFrame(place) {
+  const visible = desktop.matches || app.dataset.view === "map";
+  const query = place && placeQuery(place);
+  const src = visible && query ? "https://www.google.com/maps?" + new URLSearchParams({q:query, output:"embed"}) : "";
+  mapFrame.hidden = !src;
+  if (src && mapFrame.getAttribute("src") !== src) mapFrame.src = src;
+  if (!src) mapFrame.removeAttribute("src");
+  mapFrame.title = place ? "Google Maps · " + place.name : "Google Maps";
+}
+
+document.querySelectorAll("[data-view-target]").forEach(button => {
+  button.onclick = () => {
+    const view = button.dataset.viewTarget;
+    if (app.dataset.view === view) return;
+    scrollByView[app.dataset.view] = window.scrollY;
+    app.dataset.view = view;
+    document.querySelectorAll("[data-view-target]").forEach(tab => {
+      tab.setAttribute("aria-pressed", tab === button);
+    });
+    renderMap(days[day].slots);
+    window.scrollTo(0, scrollByView[view]);
+  };
+});
+desktop.addEventListener("change", () => renderMap(days[day].slots));
 
 function openPlace(id) {
   const place = places.get(id);
@@ -939,7 +855,7 @@ function renderChoice(slot, id) {
   const risk = crowdLabels[place.crowdRisk];
   const status = place.status ?? "candidate";
   return `<div class="choice">
-    <input id="${inputId}" type="checkbox" data-slot="${slot.id}" data-place="${id}" ${checked(slot, id) ? "checked" : ""} ${slot.kind === "fixed" ? "disabled" : ""}>
+    <label class="pick"><input id="${inputId}" type="checkbox" aria-label="${name}" data-slot="${slot.id}" data-place="${id}" ${checked(slot, id) ? "checked" : ""} ${slot.kind === "fixed" ? "disabled" : ""}></label>
     <label for="${inputId}">
       <span class="name">${name}</span>
       <span class="badges">
@@ -951,7 +867,7 @@ function renderChoice(slot, id) {
     </label>
     <div class="choice-end">
       <button type="button" class="maps" data-details="${id}" aria-label="Chi tiết ${name}">Chi tiết</button>
-      <a class="maps" target="_blank" rel="noopener" href="${mapsSearch(placeQuery(place))}" aria-label="Google Maps: ${name}">Maps ↗</a>
+      <a class="maps" target="_blank" rel="noopener" href="${mapsSearch(placeQuery(place))}" aria-label="Google Maps: ${name}">Maps</a>
     </div>
   </div>`;
 }
@@ -973,8 +889,9 @@ function render() {
   document.getElementById("area").textContent = current.area;
   document.getElementById("timeline").innerHTML = current.slots.map(slot =>
     `<article class="slot" data-slot-card="${slot.id}">
-      <div class="time">${escapeHtml(slot.time)}</div><h2>${escapeHtml(slot.title)}</h2>
-      ${slotLabels[slot.kind] ? '<p class="slot-kind">' + slotLabels[slot.kind] + '</p>' : ""}
+      <div class="slot-head"><span class="time">${escapeHtml(slot.time)}</span>
+      ${slotLabels[slot.kind] ? '<span class="slot-kind">' + slotLabels[slot.kind] + '</span>' : ""}</div>
+      <h2>${escapeHtml(slot.title)}</h2>
       ${options(slot).map(id => renderChoice(slot, id)).join("")}
       ${slot.note ? `<div class="note ${slot.kind === "required-unresolved" ? "alert" : ""}">${escapeHtml(slot.note)}</div>` : ""}
     </article>`
@@ -996,31 +913,35 @@ function render() {
 function renderMap(slots) {
   const ids = [...new Set(slots.flatMap(slot => options(slot).filter(id => checked(slot, id))))];
   const picks = ids.map(id => places.get(id));
-  const mappable = picks.filter(place => place.coordinates);
-  layer.clearLayers();
-  mappable.forEach((place, i) => {
-    const marker = L.marker(place.coordinates, {
-      title: place.name,
-      icon: L.divIcon({className:"", html:`<div class="pin">${i + 1}</div>`, iconSize:[36,36], iconAnchor:[18,18]})
-    }).on("click", () => openPlace(place.id)).addTo(layer);
-    const pin = marker.getElement();
-    pin.setAttribute("aria-label", "Chi tiết " + place.name);
-    pin.addEventListener("keydown", event => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      openPlace(place.id);
-    });
+  const focused = picks.find(place => place.id === focusedPlaceId) ?? picks[0];
+  focusedPlaceId = focused?.id;
+  syncMapFrame(focused);
+  const list = document.getElementById("map-list");
+  list.innerHTML = picks.map(place =>
+    `<div class="map-place">
+      <button type="button" data-map-place="${place.id}" aria-pressed="${place.id === focusedPlaceId}">${escapeHtml(place.name)}</button>
+      <button type="button" class="maps" data-map-details="${place.id}" aria-label="Chi tiết ${escapeHtml(place.name)}">Chi tiết</button>
+    </div>`
+  ).join("");
+  list.querySelectorAll("[data-map-place]").forEach(button => {
+    button.onclick = () => {
+      focusedPlaceId = button.dataset.mapPlace;
+      list.querySelectorAll("[data-map-place]").forEach(item => item.setAttribute("aria-pressed", item === button));
+      const place = places.get(focusedPlaceId);
+      syncMapFrame(place);
+      if (picks.length > 5) document.getElementById("go").href = mapsSearch(placeQuery(place));
+    };
   });
-  if (mappable.length > 1) map.fitBounds(mappable.map(place => place.coordinates), {padding:[32,32], maxZoom:16});
-  else map.setView(mappable[0]?.coordinates ?? mapCenter, mappable.length ? 15 : 12);
+  list.querySelectorAll("[data-map-details]").forEach(button => {
+    button.onclick = () => openPlace(button.dataset.mapDetails);
+  });
   document.getElementById("count").textContent = picks.length + " đã chọn";
-  const missing = picks.length - mappable.length;
-  document.getElementById("maphint").textContent = missing ?
-    missing + " điểm chưa có tọa độ. Mở Maps từ lịch trình." :
-    mappable.length ? "Chạm pin để xem chi tiết và chỉ đường." : "Chọn địa điểm trong lịch trình để xem pin.";
+  document.getElementById("maphint").textContent = picks.length ?
+    "Chọn một địa điểm trong danh sách để xem trên bản đồ." :
+    "Chọn địa điểm trong lịch trình để xem trên Google Maps.";
 
   const queries = picks.map(placeQuery);
-  let url = mapsSearch("Đà Lạt");
+  let url = focused ? mapsSearch(placeQuery(focused)) : mapsSearch("Đà Lạt");
   if (queries.length === 1) url = mapsDirections(queries[0]);
   if (queries.length > 1 && queries.length <= 5) {
     const params = new URLSearchParams({
@@ -1031,7 +952,7 @@ function renderMap(slots) {
   }
   const go = document.getElementById("go");
   go.href = url;
-  go.textContent = queries.length > 1 && queries.length <= 5 ? "Lộ trình cả ngày" : "Google Maps ↗";
+  go.textContent = queries.length > 1 && queries.length <= 5 ? "Lộ trình cả ngày" : "Mở Google Maps";
 }
 
 placeSheet.addEventListener("click", event => {
