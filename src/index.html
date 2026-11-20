@@ -3,79 +3,97 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#f7f7f7">
+  <meta name="theme-color" content="#ffffff">
   <title>Đà Lạt Escape · Team 6</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
   <style>
 :root {
   color-scheme: light;
-  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s8: 32px;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px;
+  --s6: 24px; --s8: 32px; --s10: 40px; --s12: 48px;
   --tap: 44px;
-  --r8: 8px; --r12: 12px; --r16: 16px; --r24: 24px;
-  --canvas: #f7f7f7; --surface: #fff; --ink: #171717; --muted: #595959;
-  --line: #dedede; --control: #767676; --soft: #ededed; --accent: #262626;
-  --focus: #555; --overlay: rgb(0 0 0 / 50%);
-  --caption: 12px/16px; --label: 14px/20px; --body: 16px/24px;
-  --heading: 20px/28px; --title: 28px/32px;
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --r8: 8px; --r12: 12px; --r16: 16px; --r20: 20px; --sheet-radius: 24px;
+  --background: #FFFFFF; --surface: #FFFFFF; --surface-secondary: #F7F7F8;
+  --text-primary: #171717; --text-secondary: #737373; --text-tertiary: #A3A3A3;
+  --border: #E8E8EA; --border-strong: #D4D4D8;
+  --selected: #202020; --selected-text: #FFFFFF;
+  --overlay: rgb(0 0 0 / 50%);
+  --title: 700 28px/34px; --heading: 650 17px/24px; --place-name: 600 15px/22px;
+  --body: 400 14px/20px; --metadata: 400 12px/16px; --caption: 500 11px/16px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+  --thumbnail-width: 104px; --thumbnail-height: 76px;
+  --source-icon-size: 14px; --handle-width: 36px;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; background: var(--canvas); color: var(--ink); font: var(--body) var(--font); }
+body { margin: 0; background: var(--background); color: var(--text-primary); font: var(--body) var(--font); }
 h1, h2, p, figure { margin: 0; }
 button, input { font: inherit; }
 button { color: inherit; cursor: pointer; }
 button, input, a { -webkit-tap-highlight-color: transparent; }
 a { color: inherit; }
-:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--s1); }
+:focus-visible { outline: 2px solid var(--text-secondary); outline-offset: var(--s1); }
 .icon-library { position: absolute; width: 0; height: 0; overflow: hidden; }
 .icon { width: var(--s5); height: var(--s5); flex: none; }
-.source .icon, .meta-icon .icon { width: var(--s4); height: var(--s4); }
+.source .icon { width: var(--source-icon-size); height: var(--source-icon-size); }
 .app { max-width: 680px; margin: auto; padding: env(safe-area-inset-top) var(--s4) max(var(--s6), env(safe-area-inset-bottom)); }
 .topbar { display: flex; justify-content: space-between; align-items: center; gap: var(--s3); padding: var(--s5) 0 var(--s3); }
-.topbar h1, .sheet-head h2 { font: 750 var(--title) var(--font); letter-spacing: -.045em; }
-.sub, .source, .slot-kind, .status, .map-note, .sheet-credit { color: var(--muted); font: var(--caption) var(--font); }
-.navigation { display: grid; gap: var(--s2); padding-bottom: var(--s3); }
-.view-switch, .tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--s1); border-radius: var(--r16); background: var(--soft); padding: var(--s1); }
-.view-switch button, .tabs button { min-width: 0; min-height: var(--tap); border: 0; border-radius: var(--r12); background: transparent; font: 650 var(--label) var(--font); color: var(--muted); }
-.view-switch button { display: flex; align-items: center; justify-content: center; gap: var(--s2); }
-.tabs button { display: grid; place-content: center; font: var(--caption) var(--font); }
-.tabs button span { font: 750 var(--label) var(--font); color: var(--ink); }
-.tabs button:hover, .view-switch button:hover { background: var(--surface); color: var(--ink); }
-.tabs .active, .view-switch button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
-.tabs .active span { color: inherit; }
+.topbar h1, .sheet-head h2 { font: var(--title) var(--font); letter-spacing: -.045em; }
+.sub, .source, .slot-kind, .status, .map-note, .sheet-credit { color: var(--text-secondary); font: var(--metadata) var(--font); }
+.topbar { padding-top: var(--s6); padding-bottom: var(--s5); }
+.topbar .sub { font: var(--body) var(--font); margin-top: var(--s1); }
+.toolbar { display: flex; flex: none; gap: var(--s1); }
+.toolbar .icon-button { background: var(--surface); border: 1px solid var(--border); }
+.toolbar .icon-button:hover { background: var(--surface-secondary); }
+.app[data-view="timeline"] [data-view-target="timeline"],
+.app[data-view="map"] [data-view-target="map"] { display: none; }
+.navigation { padding-bottom: var(--s8); }
+.tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border: 1px solid var(--border); border-radius: var(--r16); background: var(--surface); padding: 1px; height: var(--s12); }
+.tabs button { min-height: 0; min-width: 0; border: 0; border-radius: var(--r12); background: transparent; font: var(--body) var(--font); color: var(--text-primary); white-space: nowrap; }
+.tabs button:hover { background: var(--surface-secondary); }
+.tabs .active, .tabs .active:hover { background: var(--selected); color: var(--selected-text); }
 .layout { min-width: 0; }
 .app[data-view="timeline"] .mapcard, .app[data-view="map"] .day-panel { display: none; }
-.day-area { margin: 0 0 var(--s4); color: var(--muted); font: var(--label) var(--font); }
-.timeline { display: grid; gap: var(--s6); }
+.timeline { display: grid; gap: var(--s8); }
+.slot-header { display: flex; align-items: start; gap: var(--s2); justify-content: space-between; margin-bottom: var(--s3); }
 .slot-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--s1) var(--s2); }
-.time { font: 650 var(--label) var(--font); color: var(--muted); font-variant-numeric: tabular-nums; }
-.slot h2, .maphead h2 { font: 750 var(--heading) var(--font); letter-spacing: -.03em; }
-.slot h2 { margin: var(--s1) 0 var(--s2); }
+.time { font: var(--metadata) var(--font); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.slot-map { flex: none; min-height: var(--tap); padding: 0 var(--s2); border: 1px solid var(--border); border-radius: var(--r12); background: var(--surface); display: inline-flex; align-items: center; gap: var(--s1); font: var(--caption) var(--font); }
+.slot-map:hover { background: var(--surface-secondary); }
+.slot-map .icon { width: var(--s4); height: var(--s4); }
+.slot h2, .maphead h2 { font: var(--heading) var(--font); letter-spacing: -.03em; }
+.slot h2 { margin-top: var(--s1); }
 .place-list { display: grid; gap: var(--s2); }
-.choice, .map-place { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r16); }
+.choice, .map-place { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r16); }
 .choice { min-width: 0; display: grid; grid-template-columns: minmax(0,1fr) var(--tap); gap: var(--s1); align-items: center; padding: var(--s2); }
-.choice:has(input:checked) { border-color: #a3a3a3; }
+.choice:has(input:checked) { border-color: var(--border-strong); }
+.choice .place-button { grid-template-columns: var(--thumbnail-width) minmax(0,1fr); }
+.choice .place-media { width: var(--thumbnail-width); height: var(--thumbnail-height); aspect-ratio: auto; }
+@media (max-width: 359px) {
+  .choice .place-button { gap: var(--s2); }
+  .slot-map { padding-inline: var(--s1); }
+}
 .place-button { display: grid; grid-template-columns: 80px minmax(0,1fr); gap: var(--s3); align-items: center; min-height: var(--tap); min-width: 0; border: 0; padding: 0; text-align: left; background: transparent; border-radius: var(--r8); }
-.name { display: block; overflow-wrap: anywhere; font: 700 var(--body) var(--font); }
+.name { display: block; overflow-wrap: anywhere; font: var(--place-name) var(--font); }
 .badges, .source, .meta-icon { display: inline-flex; align-items: center; gap: var(--s1); }
 .badges { display: flex; flex-wrap: wrap; column-gap: var(--s2); }
 .status.booked, .status.approved-not-booked { font-weight: 650; }
-.place-media { display: grid; place-items: center; overflow: hidden; width: 100%; aspect-ratio: 4/3; background: var(--soft); color: var(--control); border-radius: var(--r8); }
+.place-media { display: grid; place-items: center; overflow: hidden; width: 100%; aspect-ratio: 4/3; background: var(--surface-secondary); color: var(--border-strong); border-radius: var(--r8); }
 .place-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .pick { display: grid; place-items: center; min-height: var(--tap); width: var(--tap); cursor: pointer; }
-.pick input { appearance: none; width: var(--s5); height: var(--s5); margin: 0; border: 1px solid var(--control); border-radius: var(--s1); background: var(--surface); cursor: inherit; }
-.pick input:checked { background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m20 6-11 11-5-5'/%3E%3C/svg%3E") center/var(--s4) no-repeat; border-color: var(--accent); }
+.pick input { appearance: none; width: var(--s6); height: var(--s6); margin: 0; border: 1px solid var(--border-strong); border-radius: var(--r8); background: var(--surface); cursor: inherit; }
+.pick input:checked { background: var(--selected) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m20 6-11 11-5-5'/%3E%3C/svg%3E") center/var(--s4) no-repeat; border-color: var(--selected); }
 .pick:has(input:disabled) { cursor: default; }
-.pick input:disabled { opacity: .48; }
-.note, .route-note, .footer { color: var(--muted); font: var(--caption) var(--font); margin-top: var(--s2); }
-.note.alert, .route-note.alert { background: var(--soft); border-radius: var(--r8); padding: var(--s2); }
+.pick input:disabled { opacity: .55; }
+button:disabled { cursor: default; opacity: .55; }
+.note, .route-note, .footer { color: var(--text-secondary); font: var(--caption) var(--font); margin-top: var(--s2); }
+.note.alert, .route-note.alert { background: var(--surface-secondary); border-radius: var(--r8); padding: var(--s2); }
 .footer { margin-top: var(--s6); }
-.icon-button, .action { display: inline-flex; justify-content: center; align-items: center; gap: var(--s2); min-height: var(--tap); padding: var(--s2) var(--s3); border: 0; border-radius: var(--r12); background: var(--accent); color: var(--surface); text-decoration: none; text-align: center; font: 650 var(--label) var(--font); }
+.icon-button, .action { display: inline-flex; justify-content: center; align-items: center; gap: var(--s2); min-height: var(--tap); padding: var(--s2) var(--s3); border: 0; border-radius: var(--r12); background: var(--selected); color: var(--surface); text-decoration: none; text-align: center; font: var(--body) var(--font); }
 .icon-button { width: var(--tap); padding: 0; }
-.icon-button, .action.alt { background: var(--soft); color: var(--ink); }
-.icon-button:hover, .action.alt:hover { background: var(--line); }
-.action:not(.alt):hover { background: #404040; }
+.icon-button, .action.alt { background: var(--surface-secondary); color: var(--text-primary); }
+.icon-button:hover, .action.alt:hover { background: var(--border); }
+.action:not(.alt):hover { filter: brightness(1.2); }
 .icon-button:active, .action:active { opacity: .75; }
 .actions { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s3); }
 .actions .action { flex: 1; }
@@ -85,47 +103,52 @@ a { color: inherit; }
 .app[data-view="map"] .sub, .app[data-view="map"] .footer { display: none; }
 .app[data-view="map"] .layout { position: relative; margin-inline: calc(-1 * var(--s4)); min-height: 0; }
 .mapcard { position: absolute; inset: 0; display: grid; grid-template-rows: minmax(0,1fr) auto; }
-.map-frame { min-height: 0; background: var(--soft); z-index: 0; }
-.map-frame .leaflet-control-zoom a { width: var(--tap); height: var(--tap); line-height: var(--tap); color: var(--ink); }
+.map-frame { min-height: 0; background: var(--surface-secondary); z-index: 0; }
+.map-frame .leaflet-control-zoom a { width: var(--tap); height: var(--tap); line-height: var(--tap); color: var(--text-primary); }
 .map-pin { display: grid; place-items: center; width: var(--tap); height: var(--tap); border-radius: 50%; background: transparent; }
-.map-pin > span { display: grid; place-items: center; width: var(--s8); height: var(--s8); color: white; background: var(--accent); border: 1px solid white; border-radius: 50%; box-shadow: 0 1px 4px rgb(0 0 0 / 18%); font: 750 var(--label) var(--font); }
-.map-sheet { max-height: min(40dvh, 216px); overflow: hidden; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r24) var(--r24) 0 0; padding: 0 var(--s4) max(var(--s2), env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
-.map-sheet[data-expanded="true"] { max-height: min(64dvh, 520px); }
-.sheet-handle { width: 100%; min-height: var(--tap); display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); touch-action: none; }
-.sheet-handle::before { content: ""; width: var(--s8); height: var(--s1); background: #999; border-radius: var(--r8); }
+.map-pin > span { display: grid; place-items: center; width: var(--s8); height: var(--s8); color: white; background: var(--selected); border: 1px solid white; border-radius: 50%; box-shadow: 0 1px 4px rgb(0 0 0 / 18%); font: var(--body) var(--font); }
+.map-sheet { max-height: min(40dvh, 216px); overflow: hidden; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--sheet-radius) var(--sheet-radius) 0 0; padding: 0 var(--s4) max(var(--s2), env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
+.map-sheet[data-sheet-state="half"] { height: min(48dvh, 360px); max-height: none; }
+.map-sheet[data-sheet-state="expanded"] { height: min(64dvh, 520px); max-height: none; }
+.sheet-handle { width: 100%; min-height: var(--tap); display: grid; place-items: center; border: 0; background: transparent; color: var(--text-secondary); touch-action: none; }
+.sheet-handle::before { content: ""; width: var(--handle-width); height: var(--s1); background: var(--text-tertiary); border-radius: var(--r8); }
 .map-sheet-content { min-height: 0; overflow: auto; overscroll-behavior: contain; padding-bottom: var(--s2); }
-.maphead { display: flex; align-items: baseline; gap: var(--s2); margin-bottom: var(--s2); }
-.maphead span { color: var(--muted); font: var(--label) var(--font); }
+.maphead { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin-bottom: var(--s2); }
+.maphead .slot-map { margin-left: auto; }
+.maphead span { color: var(--text-secondary); font: var(--body) var(--font); }
 .map-list { display: grid; grid-auto-columns: 120px; grid-auto-flow: column; gap: var(--s2); overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: var(--s1); }
 .map-place { position: relative; min-width: 0; scroll-snap-align: start; padding: var(--s2); }
 .map-place .place-button { display: block; width: 100%; }
-.map-place .name { margin-top: var(--s1); font: 700 var(--label) var(--font); }
+.map-place .name { margin-top: var(--s1); font: var(--body) var(--font); }
 .map-place .place-media { aspect-ratio: 4/3; }
 .map-place .source { display: flex; }
 .map-place > .icon-button { position: absolute; top: var(--s2); right: var(--s2); background: var(--surface); }
-.map-sheet[data-expanded="true"] .map-place > .icon-button { position: static; background: var(--soft); }
+.map-sheet[data-sheet-state="expanded"] .map-place > .icon-button { position: static; background: var(--surface-secondary); }
 .place-button:hover .name { text-decoration: underline; text-underline-offset: var(--s1); }
 .place-button:active { opacity: .75; }
-.map-sheet[data-expanded="true"] .map-list { grid-auto-flow: row; grid-auto-columns: auto; overflow: visible; }
-.map-sheet[data-expanded="true"] .map-place { display: grid; grid-template-columns: minmax(0,1fr) var(--tap); gap: var(--s2); align-items: center; }
-.map-sheet[data-expanded="true"] .map-place .place-button { display: grid; grid-template-columns: 64px minmax(0,1fr); }
-.place-sheet { position: fixed; inset: auto 0 0; width: min(100%, 560px); max-width: none; max-height: 90vh; max-height: 90dvh; overflow: auto; margin: 0 auto; padding: var(--s4) var(--s4) max(var(--s4), env(safe-area-inset-bottom)); border: 0; border-radius: var(--r24) var(--r24) 0 0; color: var(--ink); background: var(--surface); overscroll-behavior: contain; }
+.map-sheet[data-sheet-state="expanded"] .map-list { grid-auto-flow: row; grid-auto-columns: auto; overflow: visible; }
+.map-sheet[data-sheet-state="expanded"] .map-place { display: grid; grid-template-columns: minmax(0,1fr) var(--tap); gap: var(--s2); align-items: center; }
+.map-sheet[data-sheet-state="expanded"] .map-place .place-button { display: grid; grid-template-columns: 64px minmax(0,1fr); }
+.place-sheet { position: fixed; inset: auto 0 0; width: min(100%, 560px); max-width: none; max-height: 90vh; max-height: 90dvh; overflow: auto; margin: 0 auto; padding: var(--s4) var(--s4) max(var(--s4), env(safe-area-inset-bottom)); border: 0; border-radius: var(--sheet-radius) var(--sheet-radius) 0 0; color: var(--text-primary); background: var(--surface); overscroll-behavior: contain; }
 .place-sheet::backdrop { background: var(--overlay); }
 .sheet-media { margin-bottom: var(--s3); }
 .sheet-media .place-media { aspect-ratio: 16/9; border-radius: var(--r16); }
 .sheet-head { display: flex; justify-content: space-between; align-items: start; gap: var(--s3); }
-.sheet-info { display: grid; gap: var(--s2); margin-top: var(--s3); color: var(--muted); font: var(--label) var(--font); }
+.sheet-info { display: grid; gap: var(--s2); margin-top: var(--s3); color: var(--text-secondary); font: var(--body) var(--font); }
 .sheet-info p:empty { display: none; }
 .sheet-info p { display: flex; align-items: start; gap: var(--s2); }
 .sheet-gallery { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(120px, 44%); gap: var(--s2); overflow-x: auto; margin-top: var(--s4); }
 .sheet-credit { display: block; padding-top: var(--s1); }
 body:has(.place-sheet[open]) { overflow: hidden; }
-@media (min-width: 760px) {
-  .app { padding-inline: var(--s6); }
-  .app[data-view="map"] .topbar, .app[data-view="map"] .navigation { width: min(100%, 680px); margin-inline: auto; }
-  .app[data-view="map"] .layout { margin-inline: calc(-1 * var(--s6)); }
-  .map-sheet { width: min(100%, 760px); margin: auto auto 0; }
-  .place-sheet { inset: 0; margin: auto; border-radius: var(--r24); }
+@media (min-width: 900px) {
+  .app, .app[data-view="map"] { display: block; max-width: 1120px; height: auto; padding-inline: var(--s6); }
+  .app[data-view="map"] .sub, .app[data-view="map"] .footer { display: block; }
+  .app[data-view="map"] .topbar { padding: var(--s6) 0 var(--s5); }
+  .app[data-view="map"] .topbar h1 { font: var(--title) var(--font); }
+  .app .layout, .app[data-view="map"] .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, .85fr); align-items: start; column-gap: var(--s8); margin: 0; }
+  .app[data-view="timeline"] .mapcard, .app[data-view="map"] .day-panel { display: block; }
+  .app[data-view] .mapcard { display: grid; position: sticky; top: var(--s4); inset-inline: auto; bottom: auto; height: min(720px, calc(100dvh - var(--s8))); border: 1px solid var(--border); border-radius: var(--r20); overflow: hidden; }
+  .place-sheet { inset: 0; margin: auto; border-radius: var(--sheet-radius); }
 }
   </style>
 </head>
@@ -186,27 +209,26 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <main class="app" data-view="timeline">
     <header class="topbar">
       <div><h1>Da Lat Escape</h1><p class="sub">21–23 Nov, 2026</p></div>
-      <button id="share" class="icon-button" type="button" aria-label="Chia sẻ lịch trình" title="Chia sẻ lịch trình"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-share-2"></use></svg></button>
+      <div class="toolbar">
+        <button type="button" class="icon-button" data-view-target="map" aria-label="Bản đồ cả ngày" title="Bản đồ cả ngày"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-map"></use></svg></button>
+        <button type="button" class="icon-button" data-view-target="timeline" aria-label="Về lịch trình" title="Về lịch trình"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-list"></use></svg></button>
+        <button id="share" class="icon-button" type="button" aria-label="Chia sẻ lịch trình" title="Chia sẻ lịch trình"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-share-2"></use></svg></button>
+      </div>
     </header>
     <div class="navigation">
       <nav class="tabs" id="tabs" aria-label="Ngày trong lịch trình"></nav>
-      <nav class="view-switch" aria-label="Chế độ xem">
-        <button type="button" data-view-target="timeline" aria-pressed="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-list"></use></svg>Lịch trình</button>
-        <button type="button" data-view-target="map" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-map"></use></svg>Bản đồ</button>
-      </nav>
     </div>
     <div class="layout">
       <section class="day-panel" aria-label="Lịch trình trong ngày">
-        <p id="area" class="day-area"></p>
         <div id="timeline" class="timeline"></div>
         <p class="footer">Giá và độ đông ước tính.</p>
       </section>
       <section class="mapcard" aria-labelledby="map-title">
         <div id="map" class="map-frame" aria-label="Vị trí các địa điểm đã chọn"></div>
-        <section class="map-sheet" id="map-sheet" data-expanded="false" aria-labelledby="map-title">
+        <section class="map-sheet" id="map-sheet" data-sheet-state="collapsed" aria-labelledby="map-title">
           <button id="sheet-handle" class="sheet-handle" type="button" aria-expanded="false" aria-controls="map-sheet-content" aria-label="Mở rộng danh sách địa điểm"></button>
           <div id="map-sheet-content" class="map-sheet-content">
-            <div class="maphead"><h2 id="map-title"></h2><span id="count" aria-live="polite"></span></div>
+            <div class="maphead"><h2 id="map-title"></h2><span id="count" aria-live="polite"></span><button id="clear-map-slot" type="button" class="slot-map" hidden>Cả ngày</button></div>
             <div id="map-list" class="map-list"></div>
             <p id="maphint" class="map-note" aria-live="polite"></p>
             <div id="route-actions"></div>
@@ -1300,7 +1322,7 @@ if (shared) {
 const checked = (slot, id) => (selected[slot.id] ?? slot.selected).includes(id);
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character =>
   ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"})[character]);
-const dayLabel = date => date.slice(8, 10) + "/" + date.slice(5, 7);
+const desktopLayout = matchMedia("(min-width: 900px)");
 const number = new Intl.NumberFormat("vi-VN");
 const priceLabel = price => {
   if (!price) return "Chưa có giá";
@@ -1364,10 +1386,13 @@ let planScroll = 0;
 function resizeMap() {
   if (overview) overview.map.invalidateSize({pan:false});
 }
-function expandMapSheet(expanded) {
-  mapSheet.dataset.expanded = String(expanded);
-  sheetHandle.setAttribute("aria-expanded", String(expanded));
-  sheetHandle.setAttribute("aria-label", expanded ? "Thu gọn danh sách địa điểm" : "Mở rộng danh sách địa điểm");
+const sheetStates = ["collapsed", "half", "expanded"];
+let sheetStep = 0;
+function setMapSheetStep(step) {
+  sheetStep = Math.max(0, Math.min(sheetStates.length - 1, step));
+  mapSheet.dataset.sheetState = sheetStates[sheetStep];
+  sheetHandle.setAttribute("aria-expanded", String(sheetStep > 0));
+  sheetHandle.setAttribute("aria-label", ["Mở rộng danh sách địa điểm", "Mở hết danh sách địa điểm", "Thu gọn danh sách địa điểm"][sheetStep]);
   requestAnimationFrame(resizeMap);
 }
 let dragStart;
@@ -1380,29 +1405,48 @@ sheetHandle.addEventListener("pointerdown", event => {
 sheetHandle.addEventListener("pointerup", event => {
   if (dragStart !== undefined && Math.abs(event.clientY - dragStart) >= 24) {
     dragged = true;
-    expandMapSheet(event.clientY < dragStart);
+    setMapSheetStep(sheetStep + (event.clientY < dragStart ? 1 : -1));
   }
   dragStart = undefined;
 });
 sheetHandle.addEventListener("pointercancel", () => { dragStart = undefined; dragged = false; });
 sheetHandle.onclick = () => {
-  if (!dragged) expandMapSheet(mapSheet.dataset.expanded !== "true");
+  if (!dragged) setMapSheetStep((sheetStep + 1) % sheetStates.length);
   dragged = false;
 };
 
-document.querySelectorAll("[data-view-target]").forEach(button => {
-  button.addEventListener("click", () => {
-    const view = button.getAttribute("data-view-target");
-    if (app.dataset.view === view) return;
-    if (view === "map") planScroll = window.scrollY;
-    app.dataset.view = view;
-    document.querySelectorAll("[data-view-target]").forEach(tab => tab.setAttribute("aria-pressed", String(tab === button)));
-    if (view === "map") {
-      window.scrollTo(0, 0);
-      renderMap(days[day].slots);
-    } else window.scrollTo(0, planScroll);
-  });
+let mapSlotId = "";
+/** @type {HTMLElement | null} */
+let mapTrigger = null;
+function switchView(view, slotId = "", trigger = null) {
+  if (app.dataset.view === view && view !== "map") return;
+  if (view === "map") {
+    if (app.dataset.view !== "map") planScroll = window.scrollY;
+    mapSlotId = slotId;
+    mapTrigger = trigger;
+  }
+  app.dataset.view = view;
+  if (view === "map") {
+    if (!desktopLayout.matches) window.scrollTo(0, 0);
+    renderMap(days[day].slots);
+    (/** @type {HTMLButtonElement} */ (document.querySelector("button[data-view-target='timeline']"))).focus({preventScroll:true});
+  } else {
+    mapSlotId = "";
+    renderMap(days[day].slots);
+    window.scrollTo(0, planScroll);
+    if (mapTrigger?.isConnected) mapTrigger.focus({preventScroll:true});
+    else (/** @type {HTMLButtonElement} */ (document.querySelector("button[data-view-target='map']"))).focus({preventScroll:true});
+  }
+}
+
+document.querySelectorAll("button[data-view-target]").forEach(button => {
+  button.addEventListener("click", () => switchView(button.getAttribute("data-view-target"), "", button));
 });
+document.getElementById("clear-map-slot").onclick = () => {
+  mapSlotId = "";
+  renderMap(days[day].slots);
+  (/** @type {HTMLButtonElement} */ (document.querySelector("button[data-view-target='timeline']"))).focus({preventScroll:true});
+};
 
 function sourceLabel(place) {
   return `<span class="source ${place.source}">${icon(sourceIcons[place.source])}${escapeHtml(plan.sourceLegend[place.source].label)}</span>`;
@@ -1468,28 +1512,34 @@ function renderChoice(slot, id) {
 
 function render() {
   document.getElementById("tabs").innerHTML = days.map((item, i) =>
-    `<button type="button" data-day="${i}" aria-pressed="${day === i}" class="${day === i ? "active" : ""}">
-      <span>${dayLabel(item.date)}</span>${escapeHtml(item.label)}
+    `<button type="button" data-day="${i}" aria-pressed="${day === i}" aria-label="Day ${i + 1}, ${escapeHtml(item.label)} ${item.date.slice(8)}/${item.date.slice(5, 7)}" class="${day === i ? "active" : ""}">
+      Day ${i + 1}
     </button>`
   ).join("");
   (/** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll("[data-day]"))).forEach(button => {
     button.onclick = () => {
       day = Number(button.dataset.day);
+      mapSlotId = "";
       render();
       (/** @type {HTMLButtonElement} */ (document.querySelector(`[data-day="${day}"]`))).focus({preventScroll:true});
     };
   });
   const current = days[day];
-  document.getElementById("area").textContent = current.area;
   document.getElementById("timeline").innerHTML = current.slots.map(slot =>
     `<article class="slot" data-slot-card="${slot.id}">
-      <div class="slot-head"><span class="time">${escapeHtml(slot.time)}</span>
-      ${slotLabels[slot.kind] ? '<span class="slot-kind">' + slotLabels[slot.kind] + '</span>' : ""}</div>
-      <h2>${escapeHtml(slot.title)}</h2>
+      <div class="slot-header">
+        <div><div class="slot-head"><span class="time">${escapeHtml(slot.time)}</span>
+          ${slotLabels[slot.kind] ? '<span class="slot-kind">' + slotLabels[slot.kind] + '</span>' : ""}</div>
+          <h2>${escapeHtml(slot.title)}</h2></div>
+        ${options(slot).length ? `<button type="button" class="slot-map" data-slot-map="${slot.id}" aria-label="Xem trên map: ${escapeHtml(slot.title)}">${icon("map-pin")}Xem trên map</button>` : ""}
+      </div>
       <div class="place-list">${options(slot).map(id => renderChoice(slot, id)).join("")}</div>
       ${slot.note ? `<div class="note ${slot.kind === "required-unresolved" ? "alert" : ""}">${escapeHtml(slot.note)}</div>` : ""}
     </article>`
   ).join("");
+  document.querySelectorAll("button[data-slot-map]").forEach(button => {
+    button.addEventListener("click", () => switchView("map", button.getAttribute("data-slot-map"), button));
+  });
   (/** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll("[data-details]"))).forEach(button => {
     button.onclick = () => openPlace(button.dataset.details);
   });
@@ -1530,13 +1580,15 @@ function renderRoute(stops) {
 
 /** @param {Slot[]} slots */
 function renderMap(slots) {
-  if (app.dataset.view !== "map") return;
-  const ids = slots.flatMap(slot => options(slot).filter(id => checked(slot, id)));
+  if (app.dataset.view !== "map" && !desktopLayout.matches) return;
+  const scopedSlot = slots.find(slot => slot.id === mapSlotId);
+  const ids = (scopedSlot ? [scopedSlot] : slots).flatMap(slot => options(slot).filter(id => checked(slot, id)));
   const stops = ids.filter((id, i) => id !== ids[i - 1]).map(id => places.get(id));
   const picks = [...new Set(stops)];
   const known = picks.filter(place => place.position);
   const missing = picks.length - known.length;
-  document.getElementById("map-title").textContent = days[day].label;
+  document.getElementById("map-title").textContent = scopedSlot?.title ?? "Day " + (day + 1);
+  document.getElementById("clear-map-slot").hidden = !scopedSlot;
   document.getElementById("count").textContent = picks.length + " địa điểm";
   document.getElementById("maphint").textContent = !picks.length ? "Chưa chọn địa điểm." :
     missing ? missing + " địa điểm chưa có pin trên bản đồ tổng quan." : "";
@@ -1555,7 +1607,7 @@ function renderMap(slots) {
   list.querySelectorAll("[data-map-details]").forEach(button =>
     button.addEventListener("click", () => openPlace(button.getAttribute("data-map-details")))
   );
-  renderRoute(stops);
+  renderRoute(scopedSlot ? [] : stops);
   if (typeof L === "undefined") {
     mapElement.textContent = "Bản đồ chưa tải được.";
     return;
@@ -1604,6 +1656,7 @@ document.getElementById("share").onclick = async () => {
     prompt("Link chia sẻ", url.href);
   }
 };
+desktopLayout.addEventListener("change", () => renderMap(days[day].slots));
 render();
   </script>
 </body>
