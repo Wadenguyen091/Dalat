@@ -2,245 +2,240 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f7f7f7">
   <title>Đà Lạt Escape · Team 6</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
   <style>
-/* Foundations. All layout spacing and corner radii use the 4px scale. */
 :root {
   color-scheme: light;
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 28px;
-  --space-8: 32px;
-  --space-11: 44px;
-  --space-12: 48px;
-  --space-14: 56px;
-  --space-18: 72px;
-  --canvas: #f7f7f7;
-  --surface: #fff;
-  --text: #171717;
-  --secondary: #525252;
-  --border: #dedede;
-  --control-border: #737373;
-  --subtle: #ededed;
-  --selected: #262626;
-  --inverse: #fff;
-  --overlay: rgb(0 0 0 / 55%);
-  --focus: #404040;
-  --text-caption: 12px;
-  --text-label: 14px;
-  --text-body: 16px;
-  --text-heading: 20px;
-  --text-title: 24px;
-  --leading-caption: 16px;
-  --leading-label: 20px;
-  --leading-body: 24px;
-  --leading-heading: 28px;
-  --leading-title: 32px;
-  --regular: 400;
-  --medium: 550;
-  --semibold: 650;
-  --bold: 750;
-  --radius-small: var(--space-2);
-  --radius-medium: var(--space-3);
-  --radius-large: var(--space-4);
-  --radius-sheet: var(--space-6);
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s8: 32px;
+  --tap: 44px;
+  --r8: 8px; --r12: 12px; --r16: 16px; --r24: 24px;
+  --canvas: #f7f7f7; --surface: #fff; --ink: #171717; --muted: #595959;
+  --line: #dedede; --control: #767676; --soft: #ededed; --accent: #262626;
+  --focus: #555; --overlay: rgb(0 0 0 / 50%);
+  --caption: 12px/16px; --label: 14px/20px; --body: 16px/24px;
+  --heading: 20px/28px; --title: 28px/32px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; background: var(--canvas); color: var(--text); font-size: var(--text-body); line-height: var(--leading-body); }
+body { margin: 0; background: var(--canvas); color: var(--ink); font: var(--body) var(--font); }
+h1, h2, p, figure { margin: 0; }
 button, input { font: inherit; }
-button { cursor: pointer; }
-button, a, input { -webkit-tap-highlight-color: transparent; }
+button { color: inherit; cursor: pointer; }
+button, input, a { -webkit-tap-highlight-color: transparent; }
 a { color: inherit; }
-h1, h2, p { margin: 0; }
-:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--space-1); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--s1); }
 .icon-library { position: absolute; width: 0; height: 0; overflow: hidden; }
-.icon { width: var(--space-5); height: var(--space-5); flex: none; }
-.small-icon .icon, .source .icon { width: var(--space-4); height: var(--space-4); }
-.app { max-width: 1088px; margin: auto; padding: 0 var(--space-4) calc(var(--space-18) + env(safe-area-inset-bottom)); }
-.topbar { display: flex; gap: var(--space-3); justify-content: space-between; align-items: center; padding: var(--space-4) 0; }
-.topbar h1 { font-size: var(--text-heading); line-height: var(--leading-heading); font-weight: var(--bold); letter-spacing: -.035em; }
-.sub { color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); }
-.tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: var(--space-1); background: var(--subtle); padding: var(--space-1); border-radius: var(--radius-medium); margin-bottom: var(--space-4); }
-.tabs button { display: grid; place-content: center; min-height: var(--space-12); border: 0; border-radius: var(--radius-small); background: transparent; color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); font-weight: var(--medium); }
-.tabs button span { color: var(--text); font-size: var(--text-body); line-height: var(--leading-body); font-weight: var(--bold); letter-spacing: -.02em; }
-.tabs .active { background: var(--selected); color: var(--inverse); }
+.icon { width: var(--s5); height: var(--s5); flex: none; }
+.source .icon, .meta-icon .icon { width: var(--s4); height: var(--s4); }
+.app { max-width: 680px; margin: auto; padding: env(safe-area-inset-top) var(--s4) max(var(--s6), env(safe-area-inset-bottom)); }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: var(--s3); padding: var(--s5) 0 var(--s3); }
+.topbar h1, .sheet-head h2 { font: 750 var(--title) var(--font); letter-spacing: -.045em; }
+.sub, .source, .slot-kind, .status, .map-note, .sheet-credit { color: var(--muted); font: var(--caption) var(--font); }
+.navigation { display: grid; gap: var(--s2); padding-bottom: var(--s3); }
+.view-switch, .tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--s1); border-radius: var(--r16); background: var(--soft); padding: var(--s1); }
+.view-switch button, .tabs button { min-width: 0; min-height: var(--tap); border: 0; border-radius: var(--r12); background: transparent; font: 650 var(--label) var(--font); color: var(--muted); }
+.view-switch button { display: flex; align-items: center; justify-content: center; gap: var(--s2); }
+.tabs button { display: grid; place-content: center; font: var(--caption) var(--font); }
+.tabs button span { font: 750 var(--label) var(--font); color: var(--ink); }
+.tabs button:hover, .view-switch button:hover { background: var(--surface); color: var(--ink); }
+.tabs .active, .view-switch button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
 .tabs .active span { color: inherit; }
-.day-area { color: var(--secondary); margin-bottom: var(--space-3); font-size: var(--text-label); line-height: var(--leading-label); }
-.timeline { display: grid; gap: var(--space-3); }
-.slot, .mapcard { min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-large); background: var(--surface); padding: var(--space-3); }
-.slot-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-1) var(--space-2); }
-.time { color: var(--text); font-size: var(--text-caption); line-height: var(--leading-caption); font-weight: var(--semibold); font-variant-numeric: tabular-nums; }
-.slot h2, .maphead h2 { font-size: var(--text-heading); line-height: var(--leading-heading); letter-spacing: -.035em; font-weight: var(--bold); }
-.slot h2 { margin: var(--space-1) 0 var(--space-2); }
-.slot-kind { color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); }
-.choice { display: grid; grid-template-columns: var(--space-11) minmax(0,1fr) auto; align-items: center; gap: var(--space-1); border-top: 1px solid var(--border); padding: var(--space-2) 0; }
-.choice:last-child { padding-bottom: 0; }
-.pick { display: grid; place-items: center; width: var(--space-11); min-height: var(--space-11); cursor: pointer; }
-.pick input { appearance: none; width: var(--space-5); height: var(--space-5); margin: 0; border: 1px solid var(--control-border); border-radius: var(--space-1); background: var(--surface); cursor: inherit; }
-.pick input:checked { background: var(--selected) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 4 4L19 6'/%3E%3C/svg%3E") center/var(--space-4) no-repeat; border-color: var(--selected); }
-.pick input:disabled { opacity: .48; cursor: default; }
-.name { display: block; font-size: var(--text-body); line-height: var(--leading-body); font-weight: var(--semibold); overflow-wrap: anywhere; }
-.badges { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); }
-.source, .status { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-caption); line-height: var(--leading-caption); color: var(--secondary); }
-.status.booked, .status.approved-not-booked { font-weight: var(--semibold); color: var(--text); }
-.meta, .note { color: var(--secondary); font-size: var(--text-label); line-height: var(--leading-label); }
-.meta { display: block; margin-top: var(--space-1); }
-.note, .route-note { margin-top: var(--space-2); }
-.alert { background: var(--subtle); padding: var(--space-2) var(--space-3); border-radius: var(--radius-small); color: var(--text); }
-.risk { display: inline-flex; align-items: center; gap: var(--space-1); margin-top: var(--space-1); color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); font-weight: var(--medium); }
-.choice-end { display: flex; }
-.icon-button, .action { display: inline-flex; justify-content: center; align-items: center; gap: var(--space-2); min-height: var(--space-11); border: 0; text-decoration: none; text-align: center; font-size: var(--text-label); line-height: var(--leading-label); font-weight: var(--semibold); border-radius: var(--radius-small); }
-.icon-button { width: var(--space-11); padding: 0; color: var(--text); background: transparent; }
-.icon-button:hover { background: var(--subtle); }
-.topbar .icon-button, .sheet-close { background: var(--subtle); }
-.action { padding: var(--space-2) var(--space-3); background: var(--selected); color: var(--inverse); }
-.action.alt { background: var(--subtle); color: var(--text); }
-.actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+.layout { min-width: 0; }
+.app[data-view="timeline"] .mapcard, .app[data-view="map"] .day-panel { display: none; }
+.day-area { margin: 0 0 var(--s4); color: var(--muted); font: var(--label) var(--font); }
+.timeline { display: grid; gap: var(--s6); }
+.slot-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--s1) var(--s2); }
+.time { font: 650 var(--label) var(--font); color: var(--muted); font-variant-numeric: tabular-nums; }
+.slot h2, .maphead h2 { font: 750 var(--heading) var(--font); letter-spacing: -.03em; }
+.slot h2 { margin: var(--s1) 0 var(--s2); }
+.place-list { display: grid; gap: var(--s2); }
+.choice, .map-place { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r16); }
+.choice { min-width: 0; display: grid; grid-template-columns: minmax(0,1fr) var(--tap); gap: var(--s1); align-items: center; padding: var(--s2); }
+.choice:has(input:checked) { border-color: #a3a3a3; }
+.place-button { display: grid; grid-template-columns: 80px minmax(0,1fr); gap: var(--s3); align-items: center; min-height: var(--tap); min-width: 0; border: 0; padding: 0; text-align: left; background: transparent; border-radius: var(--r8); }
+.name { display: block; overflow-wrap: anywhere; font: 700 var(--body) var(--font); }
+.badges, .source, .meta-icon { display: inline-flex; align-items: center; gap: var(--s1); }
+.badges { display: flex; flex-wrap: wrap; column-gap: var(--s2); }
+.status.booked, .status.approved-not-booked { font-weight: 650; }
+.place-media { display: grid; place-items: center; overflow: hidden; width: 100%; aspect-ratio: 4/3; background: var(--soft); color: var(--control); border-radius: var(--r8); }
+.place-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.pick { display: grid; place-items: center; min-height: var(--tap); width: var(--tap); cursor: pointer; }
+.pick input { appearance: none; width: var(--s5); height: var(--s5); margin: 0; border: 1px solid var(--control); border-radius: var(--s1); background: var(--surface); cursor: inherit; }
+.pick input:checked { background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m20 6-11 11-5-5'/%3E%3C/svg%3E") center/var(--s4) no-repeat; border-color: var(--accent); }
+.pick:has(input:disabled) { cursor: default; }
+.pick input:disabled { opacity: .48; }
+.note, .route-note, .footer { color: var(--muted); font: var(--caption) var(--font); margin-top: var(--s2); }
+.note.alert, .route-note.alert { background: var(--soft); border-radius: var(--r8); padding: var(--s2); }
+.footer { margin-top: var(--s6); }
+.icon-button, .action { display: inline-flex; justify-content: center; align-items: center; gap: var(--s2); min-height: var(--tap); padding: var(--s2) var(--s3); border: 0; border-radius: var(--r12); background: var(--accent); color: var(--surface); text-decoration: none; text-align: center; font: 650 var(--label) var(--font); }
+.icon-button { width: var(--tap); padding: 0; }
+.icon-button, .action.alt { background: var(--soft); color: var(--ink); }
+.icon-button:hover, .action.alt:hover { background: var(--line); }
+.action:not(.alt):hover { background: #404040; }
+.icon-button:active, .action:active { opacity: .75; }
+.actions { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s3); }
 .actions .action { flex: 1; }
-.maphead { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
-.maphead span, .maphint, .route-note { color: var(--secondary); font-size: var(--text-label); line-height: var(--leading-label); }
-.maphint { margin: var(--space-2) 0 var(--space-3); }
-.map-frame { width: 100%; height: 264px; display: block; border: 1px solid var(--border); border-radius: var(--radius-medium); background: var(--subtle); }
-.map-list { margin-top: var(--space-2); }
-.map-place { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--space-1); align-items: center; border-bottom: 1px solid var(--border); padding: var(--space-2) 0; }
-.map-place-name { display: grid; gap: var(--space-1); min-width: 0; }
-.map-place-name button { text-align: left; min-height: var(--space-11); border: 0; border-radius: var(--radius-small); padding: var(--space-2); background: none; color: var(--text); font-weight: var(--semibold); font-size: var(--text-body); line-height: var(--leading-body); }
-.map-place-name button[aria-pressed="true"] { background: var(--subtle); }
-.map-address { padding: 0 var(--space-2); color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); }
-.map-place-links { display: flex; }
-.dock { position: fixed; z-index: 1; inset: auto 0 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-2); border-top: 1px solid var(--border); background: var(--surface); padding: var(--space-2) var(--space-4) calc(var(--space-2) + env(safe-area-inset-bottom)); }
-.dock button { display: flex; justify-content: center; align-items: center; gap: var(--space-2); min-height: var(--space-11); border: 0; border-radius: var(--radius-small); background: transparent; color: var(--secondary); font-size: var(--text-label); line-height: var(--leading-label); font-weight: var(--semibold); }
-.dock button[aria-pressed="true"] { background: var(--subtle); color: var(--text); }
-.footer { margin-top: var(--space-4); color: var(--secondary); font-size: var(--text-caption); line-height: var(--leading-caption); }
-.place-sheet { position: fixed; inset: auto 0 0; width: min(100%, 544px); max-width: none; max-height: 85dvh; margin: 0 auto; padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom)); border: 0; border-radius: var(--radius-sheet) var(--radius-sheet) 0 0; color: var(--text); background: var(--surface); }
+.app[data-view="map"] { max-width: none; height: 100vh; height: 100dvh; display: grid; grid-template-rows: auto auto minmax(0,1fr); padding-bottom: 0; }
+.app[data-view="map"] .topbar { padding-top: var(--s2); padding-bottom: var(--s2); }
+.app[data-view="map"] .topbar h1 { font-size: var(--s5); line-height: 28px; }
+.app[data-view="map"] .sub, .app[data-view="map"] .footer { display: none; }
+.app[data-view="map"] .layout { position: relative; margin-inline: calc(-1 * var(--s4)); min-height: 0; }
+.mapcard { position: absolute; inset: 0; display: grid; grid-template-rows: minmax(0,1fr) auto; }
+.map-frame { min-height: 0; background: var(--soft); z-index: 0; }
+.map-frame .leaflet-control-zoom a { width: var(--tap); height: var(--tap); line-height: var(--tap); color: var(--ink); }
+.map-pin { display: grid; place-items: center; width: var(--tap); height: var(--tap); border-radius: 50%; background: transparent; }
+.map-pin > span { display: grid; place-items: center; width: var(--s8); height: var(--s8); color: white; background: var(--accent); border: 1px solid white; border-radius: 50%; box-shadow: 0 1px 4px rgb(0 0 0 / 18%); font: 750 var(--label) var(--font); }
+.map-sheet { max-height: min(40dvh, 216px); overflow: hidden; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r24) var(--r24) 0 0; padding: 0 var(--s4) max(var(--s2), env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
+.map-sheet[data-expanded="true"] { max-height: min(64dvh, 520px); }
+.sheet-handle { width: 100%; min-height: var(--tap); display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); touch-action: none; }
+.sheet-handle::before { content: ""; width: var(--s8); height: var(--s1); background: #999; border-radius: var(--r8); }
+.map-sheet-content { min-height: 0; overflow: auto; overscroll-behavior: contain; padding-bottom: var(--s2); }
+.maphead { display: flex; align-items: baseline; gap: var(--s2); margin-bottom: var(--s2); }
+.maphead span { color: var(--muted); font: var(--label) var(--font); }
+.map-list { display: grid; grid-auto-columns: 120px; grid-auto-flow: column; gap: var(--s2); overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: var(--s1); }
+.map-place { position: relative; min-width: 0; scroll-snap-align: start; padding: var(--s2); }
+.map-place .place-button { display: block; width: 100%; }
+.map-place .name { margin-top: var(--s1); font: 700 var(--label) var(--font); }
+.map-place .place-media { aspect-ratio: 4/3; }
+.map-place .source { display: flex; }
+.map-place > .icon-button { position: absolute; top: var(--s2); right: var(--s2); background: var(--surface); }
+.map-sheet[data-expanded="true"] .map-place > .icon-button { position: static; background: var(--soft); }
+.place-button:hover .name { text-decoration: underline; text-underline-offset: var(--s1); }
+.place-button:active { opacity: .75; }
+.map-sheet[data-expanded="true"] .map-list { grid-auto-flow: row; grid-auto-columns: auto; overflow: visible; }
+.map-sheet[data-expanded="true"] .map-place { display: grid; grid-template-columns: minmax(0,1fr) var(--tap); gap: var(--s2); align-items: center; }
+.map-sheet[data-expanded="true"] .map-place .place-button { display: grid; grid-template-columns: 64px minmax(0,1fr); }
+.place-sheet { position: fixed; inset: auto 0 0; width: min(100%, 560px); max-width: none; max-height: 90vh; max-height: 90dvh; overflow: auto; margin: 0 auto; padding: var(--s4) var(--s4) max(var(--s4), env(safe-area-inset-bottom)); border: 0; border-radius: var(--r24) var(--r24) 0 0; color: var(--ink); background: var(--surface); overscroll-behavior: contain; }
 .place-sheet::backdrop { background: var(--overlay); }
-.sheet-head { display: flex; justify-content: space-between; align-items: start; gap: var(--space-2); }
-.sheet-head h2 { font-size: var(--text-title); line-height: var(--leading-title); letter-spacing: -.04em; }
-.sheet-copy, .sheet-address { margin-top: var(--space-2); font-size: var(--text-label); line-height: var(--leading-label); }
-.sheet-copy { color: var(--secondary); }
-.sheet-copy:empty { display: none; }
+.sheet-media { margin-bottom: var(--s3); }
+.sheet-media .place-media { aspect-ratio: 16/9; border-radius: var(--r16); }
+.sheet-head { display: flex; justify-content: space-between; align-items: start; gap: var(--s3); }
+.sheet-info { display: grid; gap: var(--s2); margin-top: var(--s3); color: var(--muted); font: var(--label) var(--font); }
+.sheet-info p:empty { display: none; }
+.sheet-info p { display: flex; align-items: start; gap: var(--s2); }
+.sheet-gallery { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(120px, 44%); gap: var(--s2); overflow-x: auto; margin-top: var(--s4); }
+.sheet-credit { display: block; padding-top: var(--s1); }
 body:has(.place-sheet[open]) { overflow: hidden; }
-@media (max-width: 759px) {
-  .app[data-view="timeline"] .mapcard, .app[data-view="map"] .day-panel { display: none; }
-}
 @media (min-width: 760px) {
-  .app { padding: 0 var(--space-6) var(--space-8); }
-  .topbar { padding: var(--space-6) 0 var(--space-4); }
-  .layout { display: grid; grid-template-columns: minmax(0,1.18fr) minmax(0,1fr); align-items: start; gap: var(--space-6); }
-  .slot, .mapcard { padding: var(--space-4); }
-  .map-frame { height: 288px; }
-  .dock { display: none; }
-  .place-sheet { inset: 0; margin: auto; border-radius: var(--radius-sheet); }
+  .app { padding-inline: var(--s6); }
+  .app[data-view="map"] .topbar, .app[data-view="map"] .navigation { width: min(100%, 680px); margin-inline: auto; }
+  .app[data-view="map"] .layout { margin-inline: calc(-1 * var(--s6)); }
+  .map-sheet { width: min(100%, 760px); margin: auto auto 0; }
+  .place-sheet { inset: 0; margin: auto; border-radius: var(--r24); }
 }
   </style>
 </head>
 <body>
-  <!-- Tabler Icons v3.34.1
-MIT License
+  <!-- Lucide v0.468.0
+ISC License
 
-Copyright (c) 2020-2024 Paweł Kuna
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2022.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   -->
   <svg class="icon-library" aria-hidden="true" focusable="false">
-    <symbol id="tabler-alert-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-  <path d="M12 8v4" />
-  <path d="M12 16h.01" /></symbol>
-    <symbol id="tabler-external-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" />
-  <path d="M11 13l9 -9" />
-  <path d="M15 4h5v5" /></symbol>
-    <symbol id="tabler-info-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-  <path d="M12 9h.01" />
-  <path d="M11 12h1v4h1" /></symbol>
-    <symbol id="tabler-list-details" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h8" />
-  <path d="M13 9h5" />
-  <path d="M13 15h8" />
-  <path d="M13 19h5" />
-  <path d="M3 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
-  <path d="M3 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /></symbol>
-    <symbol id="tabler-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-  <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></symbol>
-    <symbol id="tabler-navigation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18.5l7.265 2.463c.196 .077 .42 .032 .57 -.116a.548 .548 0 0 0 .134 -.572l-7.969 -17.275l-7.97 17.275c-.07 .2 -.017 .424 .135 .572c.15 .148 .374 .193 .57 .116l7.265 -2.463" /></symbol>
-    <symbol id="tabler-photo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 8h.01" />
-  <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" />
-  <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" />
-  <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3" /></symbol>
-    <symbol id="tabler-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-  <path d="M18 6m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-  <path d="M18 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-  <path d="M8.7 10.7l6.6 -3.4" />
-  <path d="M8.7 13.3l6.6 3.4" /></symbol>
-    <symbol id="tabler-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6z" /></symbol>
-    <symbol id="tabler-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></symbol>
-    <symbol id="tabler-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-12 12" />
-  <path d="M6 6l12 12" /></symbol>
+    <symbol id="lucide-share-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3" />
+  <circle cx="6" cy="12" r="3" />
+  <circle cx="18" cy="19" r="3" />
+  <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+  <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></symbol>
+    <symbol id="lucide-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h.01" />
+  <path d="M3 18h.01" />
+  <path d="M3 6h.01" />
+  <path d="M8 12h13" />
+  <path d="M8 18h13" />
+  <path d="M8 6h13" /></symbol>
+    <symbol id="lucide-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z" />
+  <path d="M15 5.764v15" />
+  <path d="M9 3.236v15" /></symbol>
+    <symbol id="lucide-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+  <circle cx="12" cy="10" r="3" /></symbol>
+    <symbol id="lucide-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+  <circle cx="9" cy="9" r="2" />
+  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></symbol>
+    <symbol id="lucide-navigation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11" /></symbol>
+    <symbol id="lucide-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" />
+  <path d="m6 6 12 12" /></symbol>
+    <symbol id="lucide-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" />
+  <polyline points="12 6 12 12 16 14" /></symbol>
+    <symbol id="lucide-user-round" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5" />
+  <path d="M20 21a8 8 0 0 0-16 0" /></symbol>
+    <symbol id="lucide-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+  <path d="M20 3v4" />
+  <path d="M22 5h-4" />
+  <path d="M4 17v2" />
+  <path d="M5 18H3" /></symbol>
+    <symbol id="lucide-external-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
   </svg>
   <main class="app" data-view="timeline">
     <header class="topbar">
-      <div><h1>21–23 tháng 11</h1><p class="sub">2026 · 6 người</p></div>
-      <button id="share" class="icon-button" type="button" aria-label="Chia sẻ lịch trình" title="Chia sẻ lịch trình"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-share"></use></svg></button>
+      <div><h1>Da Lat Escape</h1><p class="sub">21–23 Nov, 2026</p></div>
+      <button id="share" class="icon-button" type="button" aria-label="Chia sẻ lịch trình" title="Chia sẻ lịch trình"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-share-2"></use></svg></button>
     </header>
-    <nav class="tabs" id="tabs" aria-label="Ngày trong lịch trình"></nav>
+    <div class="navigation">
+      <nav class="tabs" id="tabs" aria-label="Ngày trong lịch trình"></nav>
+      <nav class="view-switch" aria-label="Chế độ xem">
+        <button type="button" data-view-target="timeline" aria-pressed="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-list"></use></svg>Lịch trình</button>
+        <button type="button" data-view-target="map" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-map"></use></svg>Bản đồ</button>
+      </nav>
+    </div>
     <div class="layout">
       <section class="day-panel" aria-label="Lịch trình trong ngày">
         <p id="area" class="day-area"></p>
-        <div class="timeline" id="timeline"></div>
+        <div id="timeline" class="timeline"></div>
+        <p class="footer">Giá và độ đông ước tính.</p>
       </section>
       <section class="mapcard" aria-labelledby="map-title">
-        <div class="maphead"><h2 id="map-title">Google Maps</h2><span id="count" aria-live="polite"></span></div>
-        <p id="maphint" class="maphint" aria-live="polite"></p>
-        <iframe id="map" class="map-frame" title="Google Maps" referrerpolicy="no-referrer-when-downgrade" hidden></iframe>
-        <div id="map-list" class="map-list"></div>
-        <div id="route-actions"></div>
+        <div id="map" class="map-frame" aria-label="Vị trí các địa điểm đã chọn"></div>
+        <section class="map-sheet" id="map-sheet" data-expanded="false" aria-labelledby="map-title">
+          <button id="sheet-handle" class="sheet-handle" type="button" aria-expanded="false" aria-controls="map-sheet-content" aria-label="Mở rộng danh sách địa điểm"></button>
+          <div id="map-sheet-content" class="map-sheet-content">
+            <div class="maphead"><h2 id="map-title"></h2><span id="count" aria-live="polite"></span></div>
+            <div id="map-list" class="map-list"></div>
+            <p id="maphint" class="map-note" aria-live="polite"></p>
+            <div id="route-actions"></div>
+          </div>
+        </section>
       </section>
     </div>
-    <p class="footer">Giá và độ đông ước tính. Ga49 và Airbnb là hai điểm đã đặt. </p>
-    <nav class="dock" aria-label="Chế độ xem">
-      <button type="button" data-view-target="timeline" aria-pressed="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-list-details"></use></svg>Lịch trình</button>
-      <button type="button" data-view-target="map" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-map-pin"></use></svg>Bản đồ</button>
-    </nav>
   </main>
   <dialog id="place-sheet" class="place-sheet" aria-labelledby="sheet-title">
+    <div id="sheet-media" class="sheet-media"></div>
     <div class="sheet-head">
-      <h2 id="sheet-title"></h2>
-      <form method="dialog"><button class="icon-button sheet-close" aria-label="Đóng chi tiết" title="Đóng chi tiết" autofocus><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-x"></use></svg></button></form>
+      <div><h2 id="sheet-title"></h2><p id="sheet-meta" class="badges"></p></div>
+      <form method="dialog"><button class="icon-button" aria-label="Đóng chi tiết" title="Đóng chi tiết" autofocus><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-x"></use></svg></button></form>
     </div>
-    <p id="sheet-meta" class="sheet-copy"></p>
-    <p id="sheet-address" class="sheet-address"></p>
-    <p id="sheet-price" class="sheet-copy"></p>
-    <p id="sheet-crowd" class="sheet-copy"></p>
-    <p id="sheet-note" class="sheet-copy"></p>
-    <p id="sheet-location" class="sheet-copy"></p>
     <div class="actions">
       <a id="sheet-directions" class="action" target="_blank" rel="noopener">Chỉ đường</a>
-      <a id="sheet-photos" class="action alt" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-photo"></use></svg>Ảnh trên Maps</a>
+      <a id="sheet-photos" class="action alt" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-external-link"></use></svg>Google Maps</a>
     </div>
+    <div class="sheet-info">
+      <p id="sheet-price"></p>
+      <p id="sheet-address"></p>
+      <p id="sheet-hours"></p>
+      <p id="sheet-crowd"></p>
+      <p id="sheet-note"></p>
+      <p id="sheet-location"></p>
+    </div>
+    <div id="sheet-gallery" class="sheet-gallery" aria-label="Ảnh địa điểm" hidden></div>
   </dialog>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
   <script id="plan-data" type="application/json">
 {
   "version": "5.0",
@@ -314,6 +309,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJm0UFWABtcTERgERTCwR5zWQ",
         "address": "38A Đường Hoàng Văn Thụ, Cam Ly - Đà Lạt, Lâm Đồng, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.940755,
+          108.4243934
+        ],
+        "source": "https://langthangdalat.com/dia-diem/bun-thit-nuong-ba-tam/"
       }
     },
     {
@@ -326,6 +328,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJ_X_Ul_0TcTERorZYghVFVWA",
         "address": "31 Nguyễn Trãi, Lâm Viên - Đà Lạt, Lâm Đồng 66000, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9423289,
+          108.4533445
+        ],
+        "source": "https://langthangdalat.com/dia-diem/banh-can-31-nguyen-trai/"
       }
     },
     {
@@ -338,6 +347,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJT-m9eNcScTERYE8yGrRGPdc",
         "address": "2 Đường Thông Thiên Học, Xuân Hương - Đà Lạt, Lâm Đồng 670000, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9518998,
+          108.4390384
+        ],
+        "source": "https://langthangdalat.com/dia-diem/banh-mi-xiu-mai-ri-79-doi-dien-cay-xang-tinh-doi/"
       }
     },
     {
@@ -350,6 +366,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJd0qigOoTcTERKn7UTATRPO0",
         "address": "42 Phan Chu Trinh, Lâm Viên - Đà Lạt, Lâm Đồng 66000, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9511723,
+          108.4654011
+        ],
+        "source": "OpenStreetMap / Photon, Bếp Khói, 42 Phan Chu Trinh"
       }
     },
     {
@@ -386,6 +409,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJF_SMu-ETcTERSqtKHhUsXow",
         "address": "4 Trần Hưng Đạo, Xuân Hương - Đà Lạt, Lâm Đồng, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.937341,
+          108.44721
+        ],
+        "source": "https://visitlamdong.vn/vi/hoino"
       }
     },
     {
@@ -398,6 +428,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJaUONuSkTcTERrPZTR1j6ZlU",
         "address": "168 Phan Đình Phùng, Xuân Hương - Đà Lạt, Lâm Đồng, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9476483,
+          108.4358889
+        ],
+        "source": "OpenStreetMap / Photon, Thiết 168, Phan Đình Phùng"
       }
     },
     {
@@ -410,6 +447,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJ199gDo1tcTERgraMSTJuk3M",
         "address": "Cầu Mạc Đĩnh Chi, Cam Ly - Đà Lạt, Lâm Đồng 700000, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9409698,
+          108.4244085
+        ],
+        "source": "https://langthangdalat.com/dia-diem/bun-bo-tho-da-da-lat-song-huong/"
       }
     },
     {
@@ -428,7 +472,16 @@ SOFTWARE.
       "google": {
         "id": "ChIJm9IiEtcTcTERNsDv1eIoZA4",
         "address": "29B Đ. Hùng Vương, Xuân Trường - Đà Lạt, Lâm Đồng 66118, Vietnam"
-      }
+      },
+      "position": {
+        "coordinates": [
+          11.9404545,
+          108.4845469
+        ],
+        "source": "https://duoitananhdao.com/"
+      },
+      "hours": "07:00–23:00 hằng ngày",
+      "hoursSource": "https://duoitananhdao.com/"
     },
     {
       "id": "thenh-thang",
@@ -460,6 +513,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJHz1TQwATcTERIvAydtps8AU",
         "address": "118 Đ. Hùng Vương, Xuân Trường - Đà Lạt, Lâm Đồng 670000, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9382476,
+          108.4831047
+        ],
+        "source": "https://langthangdalat.com/dia-diem/mountain-chill-tiem-ca-phe-da-lat/"
       }
     },
     {
@@ -476,6 +536,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJz36ouy4TcTERPOzEvMjQig4",
         "address": "Unnamed, Road, Xuân Trường - Đà Lạt, Lâm Đồng, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9381909,
+          108.4833207
+        ],
+        "source": "OpenStreetMap / Photon, Rừng Na Uy, 116 Hùng Vương"
       }
     },
     {
@@ -492,6 +559,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJ-xejkDsTcTERpFMfI6ZLr5A",
         "address": "116 Đ. Hùng Vương, Xuân Trường - Đà Lạt, Lâm Đồng 66000, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9382754,
+          108.482295
+        ],
+        "source": "OpenStreetMap / Photon, Cheo Veooo, 116 Hùng Vương"
       }
     },
     {
@@ -509,6 +583,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJWa7AunhrcTERYNCQ8WeWoyc",
         "address": "Đ. Hoa Hồng, Xuân Hương - Đà Lạt, Lâm Đồng, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.888319,
+          108.4127615
+        ],
+        "source": "OpenStreetMap / Photon, REO, đường Hoa Hồng"
       }
     },
     {
@@ -525,6 +606,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJq5H9k1AVcTERKCItON2Hn5A",
         "address": "KDL HỒ TUYỀN LÂM, TỔ 18, Xuân Hương - Đà Lạt, Lâm Đồng 67000, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9006985,
+          108.4341959
+        ],
+        "source": "OpenStreetMap / Photon, The Seen House, Hồ Tuyền Lâm"
       }
     },
     {
@@ -554,6 +642,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJs7SSFQATcTERbxqjHcwn8j0",
         "address": "31 3/4, Xuân Hương - Đà Lạt, Lâm Đồng, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9213921,
+          108.4498867
+        ],
+        "source": "https://langthangdalat.com/dia-diem/miet-miet/"
       }
     },
     {
@@ -570,6 +665,13 @@ SOFTWARE.
       "google": {
         "id": "ChIJuZxn7NAScTERQB4WFRsQ3Wk",
         "address": "200 Nguyễn Công Trứ, Lâm Viên - Đà Lạt, Lâm Đồng 66000, Vietnam"
+      },
+      "position": {
+        "coordinates": [
+          11.9567925,
+          108.4350921
+        ],
+        "source": "https://toididau.net/place/la-viet-coffee/1923"
       }
     },
     {
@@ -909,6 +1011,15 @@ SOFTWARE.
 }
   </script>
   <script>
+/**
+ * @typedef {{src:string, thumbnail:string, alt:string, source:string, credit:string}} PlacePhoto
+ * @typedef {{id:string, name:string, source:"human"|"ai", mapQuery:string, priceEstimate:{min:number,max:number}|null,
+ * status?:string, crowdRisk?:string, notes?:string, google?:{id:string,address:string},
+ * position?:{coordinates:L.LatLngTuple,source:string}, hours?:string, photos?:PlacePhoto[]}} Place
+ * @typedef {{id:string, time:string, title:string, kind:string, options:string[], selected:string[], note?:string}} Slot
+ * @typedef {{date:string,label:string,area:string,slots:Slot[]}} TripDay
+ */
+/** @type {{version:string, days:TripDay[], places:Place[], uiRules:{maxOptionsPerSlot:number}, sourceLegend:Record<string,{label:string}>}} */
 const plan = JSON.parse(document.getElementById("plan-data").textContent);
 const days = plan.days;
 const places = new Map(plan.places.map(place => [place.id, place]));
@@ -952,8 +1063,8 @@ const crowdLabels = {
   "high-sunset":"Dễ đông lúc hoàng hôn",
   "medium-uncertain":"Mức đông vừa · chưa chắc chắn"
 };
-const icon = name => `<svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-${name}"></use></svg>`;
-const sourceIcons = {human:"user", ai:"sparkles"};
+const icon = name => `<svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-${name}"></use></svg>`;
+const sourceIcons = {human:"user-round", ai:"sparkles"};
 const locationNotes = {
   ga49: "Lịch ghi 55 Hùng Vương. Maps trả về quán cà phê ở 55/5 Hùng Vương. Cần link pin từ Ga49 để xác nhận chỗ đã đặt.",
   airbnb: "Địa chỉ đặt phòng là 64/6 Đào Duy Từ. Maps chỉ xác nhận được số 64. Hỏi chủ nhà pin lối vào 64/6."
@@ -965,6 +1076,7 @@ function mapsSearch(place) {
   if (place.google) params.set("query_place_id", place.google.id);
   return "https://www.google.com/maps/search/?" + params;
 }
+/** @param {Place[]} stops */
 function mapsDirections(stops) {
   const first = stops[0];
   const last = stops.at(-1);
@@ -986,79 +1098,119 @@ function mapsDirections(stops) {
 function placeLink(place) {
   return place.google ? mapsDirections([place]) : mapsSearch(place);
 }
-const placeSheet = document.getElementById("place-sheet");
-const app = document.querySelector(".app");
-const desktop = matchMedia("(min-width: 760px)");
-const mapFrame = document.getElementById("map");
-let focusedPlaceId;
-const scrollByView = {timeline:0, map:0};
+const placeSheet = /** @type {HTMLDialogElement} */ (document.getElementById("place-sheet"));
+const app = /** @type {HTMLElement} */ (document.querySelector(".app"));
 
-function syncMapFrame(place) {
-  const visible = desktop.matches || app.dataset.view === "map";
-  const query = place?.google && placeQuery(place);
-  const src = visible && query ? "https://www.google.com/maps?" + new URLSearchParams({q:query, output:"embed"}) : "";
-  mapFrame.hidden = !src;
-  if (src && mapFrame.getAttribute("src") !== src) mapFrame.src = src;
-  if (!src) mapFrame.removeAttribute("src");
-  mapFrame.title = place ? "Google Maps · " + place.name : "Google Maps";
+/** @type {{map: L.Map, pins: L.LayerGroup} | undefined} */
+let overview;
+const mapElement = /** @type {HTMLDivElement} */ (document.getElementById("map"));
+const mapSheet = document.getElementById("map-sheet");
+const sheetHandle = document.getElementById("sheet-handle");
+const mapCenter = /** @type {L.LatLngTuple} */ ([11.94, 108.45]);
+let planScroll = 0;
+
+function resizeMap() {
+  if (overview) overview.map.invalidateSize({pan:false});
 }
+function expandMapSheet(expanded) {
+  mapSheet.dataset.expanded = String(expanded);
+  sheetHandle.setAttribute("aria-expanded", String(expanded));
+  sheetHandle.setAttribute("aria-label", expanded ? "Thu gọn danh sách địa điểm" : "Mở rộng danh sách địa điểm");
+  requestAnimationFrame(resizeMap);
+}
+let dragStart;
+let dragged = false;
+sheetHandle.addEventListener("pointerdown", event => {
+  dragStart = event.clientY;
+  dragged = false;
+  sheetHandle.setPointerCapture(event.pointerId);
+});
+sheetHandle.addEventListener("pointerup", event => {
+  if (dragStart !== undefined && Math.abs(event.clientY - dragStart) >= 24) {
+    dragged = true;
+    expandMapSheet(event.clientY < dragStart);
+  }
+  dragStart = undefined;
+});
+sheetHandle.addEventListener("pointercancel", () => { dragStart = undefined; dragged = false; });
+sheetHandle.onclick = () => {
+  if (!dragged) expandMapSheet(mapSheet.dataset.expanded !== "true");
+  dragged = false;
+};
 
 document.querySelectorAll("[data-view-target]").forEach(button => {
-  button.onclick = () => {
-    const view = button.dataset.viewTarget;
+  button.addEventListener("click", () => {
+    const view = button.getAttribute("data-view-target");
     if (app.dataset.view === view) return;
-    scrollByView[app.dataset.view] = window.scrollY;
+    if (view === "map") planScroll = window.scrollY;
     app.dataset.view = view;
-    document.querySelectorAll("[data-view-target]").forEach(tab => {
-      tab.setAttribute("aria-pressed", tab === button);
-    });
-    renderMap(days[day].slots);
-    window.scrollTo(0, scrollByView[view]);
-  };
+    document.querySelectorAll("[data-view-target]").forEach(tab => tab.setAttribute("aria-pressed", String(tab === button)));
+    if (view === "map") {
+      window.scrollTo(0, 0);
+      renderMap(days[day].slots);
+    } else window.scrollTo(0, planScroll);
+  });
 });
-desktop.addEventListener("change", () => renderMap(days[day].slots));
+
+function sourceLabel(place) {
+  return `<span class="source ${place.source}">${icon(sourceIcons[place.source])}${escapeHtml(plan.sourceLegend[place.source].label)}</span>`;
+}
+
+/** Media entries are attached to the matching place in the itinerary data. */
+/** @param {PlacePhoto|undefined} photo */
+function placeMedia(photo, thumbnail = false) {
+  if (!photo) return `<span class="place-media" aria-label="Chưa có ảnh địa điểm" role="img">${icon("image")}</span>`;
+  return `<span class="place-media"><img src="${escapeHtml(thumbnail ? photo.thumbnail : photo.src)}" alt="${escapeHtml(photo.alt)}" loading="lazy" decoding="async"></span>`;
+}
+
+function creditedPhoto(photo) {
+  return `<figure>${placeMedia(photo)}${photo ? `<figcaption class="sheet-credit"><a href="${escapeHtml(photo.source)}" rel="noopener" target="_blank">${escapeHtml(photo.credit)}</a></figcaption>` : ""}</figure>`;
+}
 
 function openPlace(id) {
   const place = places.get(id);
+  if (!place) return;
+  const photos = place.photos ?? [];
+  document.getElementById("sheet-media").innerHTML = creditedPhoto(photos[0]);
+  const gallery = document.getElementById("sheet-gallery");
+  gallery.hidden = photos.length < 2;
+  gallery.innerHTML = photos.slice(1).map(creditedPhoto).join("");
   document.getElementById("sheet-title").textContent = place.name;
-  document.getElementById("sheet-meta").textContent =
-    plan.sourceLegend[place.source].label + " · " + statusLabels[place.status ?? "candidate"];
-  document.getElementById("sheet-address").textContent = place.google?.address ?? place.mapQuery;
+  document.getElementById("sheet-meta").innerHTML = sourceLabel(place) +
+    `<span class="status">${statusLabels[place.status ?? "candidate"]}</span>`;
+  document.getElementById("sheet-address").innerHTML = icon("map-pin") + escapeHtml(place.google?.address ?? place.mapQuery);
+  document.getElementById("sheet-hours").innerHTML = place.hours ? icon("clock") + escapeHtml(place.hours) : "";
   document.getElementById("sheet-price").textContent = priceLabel(place.priceEstimate) + (place.priceEstimate ? " / người" : "");
   document.getElementById("sheet-crowd").textContent = crowdLabels[place.crowdRisk] ?
-    crowdLabels[place.crowdRisk] + " (ước tính)" : "Chưa có ước tính độ đông.";
+    crowdLabels[place.crowdRisk] + " (ước tính)" : "";
   document.getElementById("sheet-note").textContent = place.notes ?? "";
   document.getElementById("sheet-location").textContent = locationNotes[place.id] ?? "";
-  const directions = document.getElementById("sheet-directions");
+  const directions = /** @type {HTMLAnchorElement} */ (document.getElementById("sheet-directions"));
   directions.href = placeLink(place);
   directions.innerHTML = place.google ? icon("navigation") + "Chỉ đường" : icon("map-pin") + "Tra địa chỉ";
-  const photos = document.getElementById("sheet-photos");
-  photos.href = mapsSearch(place);
-  photos.hidden = !place.google;
-  placeSheet.showModal();
+  const maps = /** @type {HTMLAnchorElement} */ (document.getElementById("sheet-photos"));
+  maps.href = mapsSearch(place);
+  maps.hidden = !place.google;
+  if (!placeSheet.open) placeSheet.showModal();
+  placeSheet.scrollTop = 0;
 }
 
 function renderChoice(slot, id) {
   const place = places.get(id);
   const inputId = "place-" + slot.id + "-" + id;
   const name = escapeHtml(place.name);
-  const risk = crowdLabels[place.crowdRisk];
   const status = place.status ?? "candidate";
   return `<div class="choice">
-    <label class="pick"><input id="${inputId}" type="checkbox" aria-label="${name}" data-slot="${slot.id}" data-place="${id}" ${checked(slot, id) ? "checked" : ""} ${slot.kind === "fixed" ? "disabled" : ""}></label>
-    <label for="${inputId}">
-      <span class="name">${name}</span>
-      <span class="badges">
-        <span class="source ${place.source}">${icon(sourceIcons[place.source])}${escapeHtml(plan.sourceLegend[place.source].label)}</span>
-        <span class="status ${status}">${statusLabels[status]}</span>
+    <button type="button" class="place-button" data-details="${id}" aria-label="Chi tiết ${name}">
+      ${placeMedia(place.photos?.[0], true)}
+      <span>
+        <span class="name">${name}</span>
+        <span class="badges">${sourceLabel(place)}${status !== "candidate" ? `<span class="status ${status}">${statusLabels[status]}</span>` : ""}</span>
       </span>
-      <span class="meta">${priceLabel(place.priceEstimate)}${place.priceEstimate ? " / người" : ""}</span>
-      ${risk ? '<span class="risk small-icon">' + icon("alert-circle") + risk + '</span>' : ""}
+    </button>
+    <label class="pick" for="${inputId}">
+      <input id="${inputId}" type="checkbox" aria-label="${name}" data-slot="${slot.id}" data-place="${id}" ${checked(slot, id) ? "checked" : ""} ${slot.kind === "fixed" ? "disabled" : ""}>
     </label>
-    <div class="choice-end">
-      <button type="button" class="icon-button" data-details="${id}" aria-label="Chi tiết ${name}" title="Chi tiết"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-info-circle"></use></svg></button>
-      <a class="icon-button" target="_blank" rel="noopener" href="${escapeHtml(mapsSearch(place))}" aria-label="Google Maps: ${name}" title="Mở Google Maps"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-external-link"></use></svg></a>
-    </div>
   </div>`;
 }
 
@@ -1068,11 +1220,11 @@ function render() {
       <span>${dayLabel(item.date)}</span>${escapeHtml(item.label)}
     </button>`
   ).join("");
-  document.querySelectorAll("[data-day]").forEach(button => {
+  (/** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll("[data-day]"))).forEach(button => {
     button.onclick = () => {
       day = Number(button.dataset.day);
       render();
-      document.querySelector(`[data-day="${day}"]`).focus({preventScroll:true});
+      (/** @type {HTMLButtonElement} */ (document.querySelector(`[data-day="${day}"]`))).focus({preventScroll:true});
     };
   });
   const current = days[day];
@@ -1082,14 +1234,14 @@ function render() {
       <div class="slot-head"><span class="time">${escapeHtml(slot.time)}</span>
       ${slotLabels[slot.kind] ? '<span class="slot-kind">' + slotLabels[slot.kind] + '</span>' : ""}</div>
       <h2>${escapeHtml(slot.title)}</h2>
-      ${options(slot).map(id => renderChoice(slot, id)).join("")}
+      <div class="place-list">${options(slot).map(id => renderChoice(slot, id)).join("")}</div>
       ${slot.note ? `<div class="note ${slot.kind === "required-unresolved" ? "alert" : ""}">${escapeHtml(slot.note)}</div>` : ""}
     </article>`
   ).join("");
-  document.querySelectorAll("[data-details]").forEach(button => {
+  (/** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll("[data-details]"))).forEach(button => {
     button.onclick = () => openPlace(button.dataset.details);
   });
-  document.querySelectorAll("[data-slot]").forEach(input => {
+  (/** @type {NodeListOf<HTMLInputElement>} */ (document.querySelectorAll("[data-slot]"))).forEach(input => {
     input.onchange = () => {
       const slot = current.slots.find(item => item.id === input.dataset.slot);
       selected[slot.id] = options(slot).filter(id => id === input.dataset.place ? input.checked : checked(slot, id));
@@ -1100,6 +1252,7 @@ function render() {
   renderMap(current.slots);
 }
 
+/** @param {Place[]} stops */
 function renderRoute(stops) {
   const actions = document.getElementById("route-actions");
   const missing = [...new Set(stops.filter(place => !place.google).map(place => place.name))];
@@ -1114,8 +1267,8 @@ function renderRoute(stops) {
   }
   if (segment.length > 1) segments.push(segment);
   const complete = !missing.length && stops.length <= 5;
-  const note = missing.length ? `Cần xác nhận pin của ${missing.join(" và ")}. Dùng nút ở từng điểm để đi riêng.` :
-    stops.length > 5 ? "Lộ trình được chia chặng để Google Maps trên điện thoại nhận đủ các điểm dừng." : "";
+  const note = missing.length ? `Cần xác nhận: ${missing.join(" và ")}.` :
+    stops.length > 5 ? "Lộ trình chia chặng để giữ đủ điểm dừng." : "";
   actions.innerHTML = (note ? `<p class="route-note alert">${escapeHtml(note)}</p>` : "") +
     segments.map((items, i) =>
       `<div class="actions"><a class="action" target="_blank" rel="noopener" href="${escapeHtml(mapsDirections(items))}">${icon("navigation")}${complete ?
@@ -1123,44 +1276,65 @@ function renderRoute(stops) {
     ).join("");
 }
 
+/** @param {Slot[]} slots */
 function renderMap(slots) {
+  if (app.dataset.view !== "map") return;
   const ids = slots.flatMap(slot => options(slot).filter(id => checked(slot, id)));
   const stops = ids.filter((id, i) => id !== ids[i - 1]).map(id => places.get(id));
   const picks = [...new Set(stops)];
-  const focused = picks.find(place => place.id === focusedPlaceId) ?? picks.find(place => place.google) ?? picks[0];
-  focusedPlaceId = focused?.id;
-  function showMap(place) {
-    syncMapFrame(place);
-    document.getElementById("maphint").textContent = !place ?
-      "Chọn địa điểm trong lịch trình để xem trên Google Maps." :
-      locationNotes[place.id] ?? "Chọn một địa điểm để xem trên bản đồ hoặc mở chỉ đường.";
-  }
-  showMap(focused);
+  const known = picks.filter(place => place.position);
+  const missing = picks.length - known.length;
+  document.getElementById("map-title").textContent = days[day].label;
+  document.getElementById("count").textContent = picks.length + " địa điểm";
+  document.getElementById("maphint").textContent = !picks.length ? "Chưa chọn địa điểm." :
+    missing ? missing + " địa điểm chưa có pin trên bản đồ tổng quan." : "";
   const list = document.getElementById("map-list");
-  list.innerHTML = picks.map(place =>
+  list.hidden = !picks.length;
+  list.innerHTML = picks.map((place, i) =>
     `<div class="map-place">
-      <div class="map-place-name">
-        <button type="button" data-map-place="${place.id}" aria-pressed="${place.id === focusedPlaceId}">${escapeHtml(place.name)}</button>
-        <span class="map-address">${escapeHtml(place.google?.address ?? "Cần xác nhận pin")}</span>
-      </div>
-      <div class="map-place-links">
-        <a class="icon-button" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}" aria-label="${place.google ? "Chỉ đường" : "Tra địa chỉ"}: ${escapeHtml(place.name)}" title="${place.google ? "Chỉ đường" : "Tra địa chỉ"}">${icon(place.google ? "navigation" : "map-pin")}</a>
-        <button type="button" class="icon-button" data-map-details="${place.id}" aria-label="Chi tiết ${escapeHtml(place.name)}" title="Chi tiết"><svg class="icon" aria-hidden="true" focusable="false"><use href="#tabler-info-circle"></use></svg></button>
-      </div>
+      <button type="button" class="place-button" data-map-details="${place.id}" aria-label="Chi tiết ${escapeHtml(place.name)}">
+        ${placeMedia(place.photos?.[0], true)}
+        <span><span class="name">${i + 1}. ${escapeHtml(place.name)}</span>${sourceLabel(place)}</span>
+      </button>
+      <a class="icon-button" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}"
+        aria-label="${place.google ? "Chỉ đường" : "Tra địa chỉ"}: ${escapeHtml(place.name)}">${icon(place.google ? "navigation" : "map-pin")}</a>
     </div>`
   ).join("");
-  list.querySelectorAll("[data-map-place]").forEach(button => {
-    button.onclick = () => {
-      focusedPlaceId = button.dataset.mapPlace;
-      list.querySelectorAll("[data-map-place]").forEach(item => item.setAttribute("aria-pressed", item === button));
-      showMap(places.get(focusedPlaceId));
-    };
-  });
-  list.querySelectorAll("[data-map-details]").forEach(button => {
-    button.onclick = () => openPlace(button.dataset.mapDetails);
-  });
-  document.getElementById("count").textContent = picks.length + " đã chọn";
+  list.querySelectorAll("[data-map-details]").forEach(button =>
+    button.addEventListener("click", () => openPlace(button.getAttribute("data-map-details")))
+  );
   renderRoute(stops);
+  if (typeof L === "undefined") {
+    mapElement.textContent = "Bản đồ chưa tải được.";
+    return;
+  }
+  if (!overview) {
+    const map = L.map(mapElement, {scrollWheelZoom:false, zoomControl:false}).setView(mapCenter, 12);
+    L.control.zoom({position:"topright"}).addTo(map);
+    L.tileLayer("https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+      maxZoom:19, attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · HOT · OSM France'
+    }).addTo(map);
+    overview = {map, pins:L.layerGroup().addTo(map)};
+  }
+  const {map, pins} = overview;
+  map.invalidateSize({pan:false});
+  pins.clearLayers();
+  known.forEach(place => {
+    const number = picks.indexOf(place) + 1;
+    const marker = L.marker(place.position.coordinates, {
+      title: place.name,
+      icon: L.divIcon({className:"map-pin", html:`<span>${number}</span>`, iconSize:[44,44], iconAnchor:[22,22]})
+    }).on("click", () => openPlace(place.id)).addTo(pins);
+    const pin = marker.getElement();
+    pin.setAttribute("aria-label", number + ". " + place.name);
+    pin.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openPlace(place.id);
+    });
+  });
+  if (known.length > 1) map.fitBounds(known.map(place => place.position.coordinates), {padding:[28,28], maxZoom:18});
+  else map.setView(known[0]?.position.coordinates ?? mapCenter, known.length ? 15 : 12);
 }
 
 placeSheet.addEventListener("click", event => {
