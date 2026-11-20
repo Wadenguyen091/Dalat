@@ -39,7 +39,7 @@ a { color: inherit; }
 .app { max-width: 680px; margin: auto; padding: env(safe-area-inset-top) var(--s4) max(var(--s6), env(safe-area-inset-bottom)); }
 .topbar { display: flex; justify-content: space-between; align-items: center; gap: var(--s3); padding: var(--s5) 0 var(--s3); }
 .topbar h1, .sheet-head h2 { font: var(--title) var(--font); letter-spacing: -.045em; }
-.sub, .status, .map-note, .sheet-credit { color: var(--text-secondary); font: var(--metadata) var(--font); }
+.sub, .status, .map-note { color: var(--text-secondary); font: var(--metadata) var(--font); }
 .topbar { padding-top: var(--s6); padding-bottom: var(--s5); }
 .topbar .sub { font: var(--body) var(--font); margin-top: var(--s1); }
 .toolbar { display: flex; flex: none; gap: var(--s1); }
@@ -118,7 +118,6 @@ button:disabled { cursor: default; opacity: .55; }
 #sheet-title:focus { outline: none; }
 .sheet-info p { display: flex; align-items: start; gap: var(--s2); }
 .sheet-gallery { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(120px, 44%); gap: var(--s2); overflow-x: auto; margin-top: var(--s4); }
-.sheet-credit { display: block; padding-top: var(--s1); }
 body:has(.place-sheet[open]) { overflow: hidden; }
 @media (min-width: 900px) {
   .app { max-width: 760px; padding-inline: var(--s6); }
@@ -230,12 +229,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     ],
     "people": 6,
     "transport": "self-rented vehicles",
-    "airbnb": "64/6 Đào Duy Từ, Đà Lạt",
+    "airbnb": "64/6 Đào Duy Từ, phường Xuân Hương, Đà Lạt 60000, Việt Nam",
     "arrival": "2026-11-21T08:00:00+07:00",
     "checkin": "2026-11-21T15:00:00+07:00",
     "checkout": "2026-11-23T11:00:00+07:00",
     "departure": "2026-11-23T22:00:00+07:00",
-    "arrivalRest": "Ga49, 55 Hùng Vương (booked)"
+    "arrivalRest": "Ga49, 55/3 Hùng Vương, Lâm Viên – Đà Lạt, Lâm Đồng, Việt Nam (booked)"
   },
   "sourceLegend": {
     "human": {
@@ -256,16 +255,28 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
       "name": "Ga49",
       "source": "ai",
       "category": "rest",
-      "mapQuery": "Ga49 55 Hùng Vương Đà Lạt",
+      "mapQuery": "55/3 Hùng Vương, Lâm Viên – Đà Lạt, Lâm Đồng, Việt Nam",
       "priceEstimate": null,
-      "status": "booked"
+      "status": "booked",
+      "google": {
+        "id": "ChIJdX4ITfwScTER_vovBdtL6GE",
+        "address": "55/3 Hùng Vương, Lâm Viên – Đà Lạt, Lâm Đồng, Việt Nam",
+        "addressOnly": true
+      },
+      "position": {
+        "coordinates": [
+          11.9501129,
+          108.4670612
+        ],
+        "source": "Địa chỉ do người dùng cung cấp, đối chiếu pin tòa nhà 55/3 trên Google Maps."
+      }
     },
     {
       "id": "airbnb",
       "name": "Airbnb 64/6 Đào Duy Từ",
       "source": "ai",
       "category": "stay",
-      "mapQuery": "64/6 Đào Duy Từ Đà Lạt",
+      "mapQuery": "64/6 Đào Duy Từ, phường Xuân Hương, Đà Lạt 60000, Việt Nam",
       "priceEstimate": null,
       "status": "booked"
     },
@@ -1248,7 +1259,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /**
  * @typedef {{src:string, thumbnail:string, alt:string, source:string, credit:string}} PlacePhoto
  * @typedef {{id:string, name:string, source:"human"|"ai", mapQuery:string, priceEstimate:{min:number,max:number}|null,
- * status?:string, crowdRisk?:string, notes?:string, google?:{id:string,address:string},
+ * status?:string, crowdRisk?:string, notes?:string, google?:{id:string,address:string,addressOnly?:boolean},
  * position?:{coordinates:L.LatLngTuple,source:string}, hours?:string, photos?:PlacePhoto[]}} Place
  * @typedef {{id:string, time:string, title:string, kind:string, options:string[], selected:string[], note?:string}} Slot
  * @typedef {{date:string,label:string,area:string,slots:Slot[]}} TripDay
@@ -1313,10 +1324,9 @@ const crowdLabels = {
 };
 const icon = name => `<svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-${name}"></use></svg>`;
 const locationNotes = {
-  ga49: "Maps trả về số 55/5. Xin pin đúng từ Ga49.",
-  airbnb: "Maps chỉ tìm được số 64. Xin chủ nhà pin lối vào 64/6."
+  airbnb: "Google Maps chưa xác nhận được ghim đúng căn 64/6."
 };
-const placeQuery = place => place.google ?
+const placeQuery = place => place.google && !place.google.addressOnly ?
   place.name + ", " + place.google.address : place.mapQuery;
 function mapsSearch(place) {
   const params = new URLSearchParams({api:"1", query:placeQuery(place)});
@@ -1391,18 +1401,14 @@ function placeMedia(photo, thumbnail = false) {
   return `<span class="place-media"><img src="${escapeHtml(thumbnail ? photo.thumbnail : photo.src)}" alt="${escapeHtml(photo.alt)}" loading="lazy" decoding="async"></span>`;
 }
 
-function creditedPhoto(photo) {
-  return `<figure>${placeMedia(photo)}${photo ? `<figcaption class="sheet-credit"><a href="${escapeHtml(photo.source)}" rel="noopener" target="_blank">${escapeHtml(photo.credit)}</a></figcaption>` : ""}</figure>`;
-}
-
 function openPlace(id) {
   const place = places.get(id);
   if (!place) return;
   const photos = place.photos ?? [];
-  document.getElementById("sheet-media").innerHTML = creditedPhoto(photos[0]);
+  document.getElementById("sheet-media").innerHTML = placeMedia(photos[0]);
   const gallery = document.getElementById("sheet-gallery");
   gallery.hidden = photos.length < 2;
-  gallery.innerHTML = photos.slice(1).map(creditedPhoto).join("");
+  gallery.innerHTML = photos.slice(1).map(photo => placeMedia(photo)).join("");
   document.getElementById("sheet-title").textContent = place.name;
   document.getElementById("sheet-meta").textContent = statusLabels[place.status] ?? "";
   document.getElementById("sheet-address").innerHTML = icon("map-pin") + escapeHtml(place.google?.address ?? place.mapQuery);
