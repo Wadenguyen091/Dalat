@@ -122,6 +122,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
   .dock { display: none; }
   .place-sheet { inset: 0; margin: auto; border-radius: 24px; }
 }
+.map-place-name { display: grid; gap: 3px; padding: 7px 0; min-width: 0; }
+.map-place .map-place-name button { justify-content: start; }
+.map-address { padding: 0 7px; color: var(--muted); font-size: 12px; line-height: 1.35; }
+.route-note { margin: 12px 0 0; font-size: 13px; line-height: 1.5; }
+.map-place-links { display: grid; justify-items: end; }
   </style>
 </head>
 <body>
@@ -145,7 +150,7 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         <p id="maphint" class="maphint" aria-live="polite"></p>
         <iframe id="map" class="map-frame" title="Google Maps" referrerpolicy="no-referrer-when-downgrade" hidden></iframe>
         <div id="map-list" class="map-list"></div>
-        <div class="actions"><a id="go" class="action" target="_blank" rel="noopener">Mở Google Maps</a></div>
+        <div id="route-actions"></div>
       </section>
     </div>
     <p class="footer">Giá và độ đông ước tính. Ga49 và Airbnb là hai điểm đã đặt. Ảnh Hồ Xuân Hương của <a href="https://commons.wikimedia.org/wiki/File:Da_Lat_-_Xuan_Huong_Lake.jpg">P. Hughes</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>, cắt khung).</p>
@@ -164,7 +169,7 @@ body:has(.place-sheet[open]) { overflow: hidden; }
     <p id="sheet-price" class="sheet-copy"></p>
     <p id="sheet-crowd" class="sheet-copy"></p>
     <p id="sheet-note" class="sheet-copy"></p>
-    <p class="sheet-copy">Xem ảnh địa điểm trên Google Maps.</p>
+    <p id="sheet-location" class="sheet-copy"></p>
     <div class="actions">
       <a id="sheet-directions" class="action" target="_blank" rel="noopener">Chỉ đường</a>
       <a id="sheet-photos" class="action alt" target="_blank" rel="noopener">Ảnh trên Maps</a>
@@ -227,7 +232,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "source": "human",
       "category": "breakfast",
       "mapQuery": "69 Hoàng Hoa Thám Đà Lạt",
-      "priceEstimate": null
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJPyGH0MATcTERyB-h-3QPJf4",
+        "address": "69 Hoàng Hoa Thám, Thành phố Đà Lạt, Lâm Đồng 670000, Vietnam"
+      }
     },
     {
       "id": "bun-ba-tam",
@@ -235,7 +244,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "source": "human",
       "category": "breakfast",
       "mapQuery": "38A Hoàng Văn Thụ Đà Lạt",
-      "priceEstimate": null
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJm0UFWABtcTERgERTCwR5zWQ",
+        "address": "38A Đường Hoàng Văn Thụ, Cam Ly - Đà Lạt, Lâm Đồng, Vietnam"
+      }
     },
     {
       "id": "banhcan-31",
@@ -243,7 +256,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "source": "human",
       "category": "breakfast",
       "mapQuery": "31 Nguyễn Trãi Đà Lạt",
-      "priceEstimate": null
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJ_X_Ul_0TcTERorZYghVFVWA",
+        "address": "31 Nguyễn Trãi, Lâm Viên - Đà Lạt, Lâm Đồng 66000, Vietnam"
+      }
     },
     {
       "id": "xiumai-79",
@@ -251,7 +268,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "source": "human",
       "category": "breakfast",
       "mapQuery": "1 Thông Thiên Học Đà Lạt",
-      "priceEstimate": null
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJT-m9eNcScTERYE8yGrRGPdc",
+        "address": "2 Đường Thông Thiên Học, Xuân Hương - Đà Lạt, Lâm Đồng 670000, Vietnam"
+      }
     },
     {
       "id": "bep-khoi",
@@ -259,7 +280,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "source": "human",
       "category": "lunch",
       "mapQuery": "42 Phan Chu Trinh Đà Lạt",
-      "priceEstimate": null
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJd0qigOoTcTERKn7UTATRPO0",
+        "address": "42 Phan Chu Trinh, Lâm Viên - Đà Lạt, Lâm Đồng 66000, Vietnam"
+      }
     },
     {
       "id": "ku-boc",
@@ -267,7 +292,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "source": "human",
       "category": "lunch",
       "mapQuery": "36 Mạc Đĩnh Chi Đà Lạt",
-      "priceEstimate": null
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJjS8m6kcTcTEROOBqHc9Qrp8",
+        "address": "36 Đ. Mạc Đĩnh Chi, Xuân Hương - Đà Lạt, Lâm Đồng 610000, Vietnam"
+      }
     },
     {
       "id": "tay-bac",
@@ -275,7 +304,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "source": "human",
       "category": "lunch",
       "mapQuery": "27 Đèo Mimosa Đà Lạt",
-      "priceEstimate": null
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJjfZohQETcTERWqAdXvemxek",
+        "address": "Đèo mimoza/27 Đèo Mimosa, Đà Lạt, Lâm Đồng 66100, Vietnam"
+      }
     },
     {
       "id": "hoi-no",
@@ -283,7 +316,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "source": "human",
       "category": "lunch",
       "mapQuery": "4 Trần Hưng Đạo Đà Lạt",
-      "priceEstimate": null
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJF_SMu-ETcTERSqtKHhUsXow",
+        "address": "4 Trần Hưng Đạo, Xuân Hương - Đà Lạt, Lâm Đồng, Vietnam"
+      }
     },
     {
       "id": "thiet-168",
@@ -291,7 +328,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "source": "human",
       "category": "lunch",
       "mapQuery": "168 Phan Đình Phùng Đà Lạt",
-      "priceEstimate": null
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJaUONuSkTcTERrPZTR1j6ZlU",
+        "address": "168 Phan Đình Phùng, Xuân Hương - Đà Lạt, Lâm Đồng, Vietnam"
+      }
     },
     {
       "id": "bunbo-songhuong",
@@ -299,7 +340,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "source": "human",
       "category": "breakfast",
       "mapQuery": "Bún bò thố đá Sông Hương Cầu Mạc Đĩnh Chi Đà Lạt",
-      "priceEstimate": null
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJ199gDo1tcTERgraMSTJuk3M",
+        "address": "Cầu Mạc Đĩnh Chi, Cam Ly - Đà Lạt, Lâm Đồng 700000, Vietnam"
+      }
     },
     {
       "id": "duoi-tan",
@@ -313,7 +358,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       },
       "status": "approved-not-booked",
       "crowdRisk": "high-weekend-evening",
-      "notes": "Approved by user; acoustic and table for 6 require confirmation"
+      "notes": "Approved by user; acoustic and table for 6 require confirmation",
+      "google": {
+        "id": "ChIJm9IiEtcTcTERNsDv1eIoZA4",
+        "address": "29B Đ. Hùng Vương, Xuân Trường - Đà Lạt, Lâm Đồng 66118, Vietnam"
+      }
     },
     {
       "id": "thenh-thang",
@@ -325,7 +374,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         "min": 50000,
         "max": 70000
       },
-      "crowdRisk": "medium-high-weekend"
+      "crowdRisk": "medium-high-weekend",
+      "google": {
+        "id": "ChIJH0wzPyoTcTER-aHhB2ocgy0",
+        "address": "hem xe Ford ô tô, 108 Đ. Hùng Vương, Tổ Tây Hồ 2, Xuân Trường - Đà Lạt, Lâm Đồng 66000, Vietnam"
+      }
     },
     {
       "id": "mountain-chill",
@@ -337,7 +390,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         "min": 55000,
         "max": 80000
       },
-      "crowdRisk": "high-sunset"
+      "crowdRisk": "high-sunset",
+      "google": {
+        "id": "ChIJHz1TQwATcTERIvAydtps8AU",
+        "address": "118 Đ. Hùng Vương, Xuân Trường - Đà Lạt, Lâm Đồng 670000, Vietnam"
+      }
     },
     {
       "id": "rung-na-uy",
@@ -349,7 +406,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         "min": 45000,
         "max": 85000
       },
-      "crowdRisk": "medium-uncertain"
+      "crowdRisk": "medium-uncertain",
+      "google": {
+        "id": "ChIJz36ouy4TcTERPOzEvMjQig4",
+        "address": "Unnamed, Road, Xuân Trường - Đà Lạt, Lâm Đồng, Vietnam"
+      }
     },
     {
       "id": "cheo-veooo",
@@ -361,7 +422,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         "min": 45000,
         "max": 70000
       },
-      "crowdRisk": "high-sunset"
+      "crowdRisk": "high-sunset",
+      "google": {
+        "id": "ChIJ-xejkDsTcTERpFMfI6ZLr5A",
+        "address": "116 Đ. Hùng Vương, Xuân Trường - Đà Lạt, Lâm Đồng 66000, Vietnam"
+      }
     },
     {
       "id": "reo",
@@ -374,7 +439,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         "max": 250000
       },
       "crowdRisk": "unknown",
-      "notes": "SUP estimate only; reserve 6 places and check weather"
+      "notes": "SUP estimate only; reserve 6 places and check weather",
+      "google": {
+        "id": "ChIJWa7AunhrcTERYNCQ8WeWoyc",
+        "address": "Đ. Hoa Hồng, Xuân Hương - Đà Lạt, Lâm Đồng, Vietnam"
+      }
     },
     {
       "id": "seen",
@@ -386,7 +455,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         "min": 40000,
         "max": 80000
       },
-      "crowdRisk": "unknown"
+      "crowdRisk": "unknown",
+      "google": {
+        "id": "ChIJq5H9k1AVcTERKCItON2Hn5A",
+        "address": "KDL HỒ TUYỀN LÂM, TỔ 18, Xuân Hương - Đà Lạt, Lâm Đồng 67000, Vietnam"
+      }
     },
     {
       "id": "thong",
@@ -398,7 +471,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         "min": 40000,
         "max": 80000
       },
-      "crowdRisk": "unknown"
+      "crowdRisk": "unknown",
+      "google": {
+        "id": "ChIJteiqecETcTERYUVaYeczrCo",
+        "address": "31/13 3/4, Xuân Hương - Đà Lạt, Lâm Đồng, Vietnam"
+      }
     },
     {
       "id": "miet",
@@ -407,7 +484,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "category": "forest-cafe",
       "mapQuery": "Miết Miết Đà Lạt",
       "priceEstimate": null,
-      "crowdRisk": "unknown"
+      "crowdRisk": "unknown",
+      "google": {
+        "id": "ChIJs7SSFQATcTERbxqjHcwn8j0",
+        "address": "31 3/4, Xuân Hương - Đà Lạt, Lâm Đồng, Vietnam"
+      }
     },
     {
       "id": "la-viet",
@@ -419,7 +500,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         "min": 30000,
         "max": 75000
       },
-      "crowdRisk": "unknown"
+      "crowdRisk": "unknown",
+      "google": {
+        "id": "ChIJuZxn7NAScTERQB4WFRsQ3Wk",
+        "address": "200 Nguyễn Công Trứ, Lâm Viên - Đà Lạt, Lâm Đồng 66000, Vietnam"
+      }
     },
     {
       "id": "hidden-land",
@@ -431,7 +516,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
         "min": 30000,
         "max": 60000
       },
-      "crowdRisk": "unknown"
+      "crowdRisk": "unknown",
+      "google": {
+        "id": "ChIJyfncbz8TcTERCz0qYUJOdbw",
+        "address": "Đường Lâm Văn Thạnh, Xuân Trường - Đà Lạt, Lâm Đồng 67000, Vietnam"
+      }
     },
     {
       "id": "rung-la-kim",
@@ -440,7 +529,11 @@ body:has(.place-sheet[open]) { overflow: hidden; }
       "category": "forest-bbq",
       "mapQuery": "Rừng Lá Kim Cafe BBQ An Sơn Đà Lạt",
       "priceEstimate": null,
-      "crowdRisk": "unknown"
+      "crowdRisk": "unknown",
+      "google": {
+        "id": "ChIJG1lIJDptcTERPF8wUnpfhxo",
+        "address": "Đ. An Sơn, Xuân Hương - Đà Lạt, Lâm Đồng, Vietnam"
+      }
     }
   ],
   "days": [
@@ -797,10 +890,38 @@ const sourceIcons = {
   human:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10" cy="6" r="3"/><path d="M4 17v-1a6 6 0 0 1 12 0v1"/></svg>',
   ai:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="m8 2 1.6 4.4L14 8l-4.4 1.6L8 14l-1.6-4.4L2 8l4.4-1.6L8 2Zm7 9 1 2.8 2.8 1L16 16l-1 2.8-1-2.8-2.8-1.2 2.8-1 1-2.8Z"/></svg>'
 };
-const mapsSearch = query => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
-const mapsDirections = query => "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(query) + "&travelmode=driving&dir_action=navigate";
-const placeQuery = place => place.mapQuery.toLocaleLowerCase("vi").includes(place.name.toLocaleLowerCase("vi"))
-  ? place.mapQuery : place.name + ", " + place.mapQuery;
+const locationNotes = {
+  ga49: "Lịch ghi 55 Hùng Vương. Maps trả về quán cà phê ở 55/5 Hùng Vương. Cần link pin từ Ga49 để xác nhận chỗ đã đặt.",
+  airbnb: "Địa chỉ đặt phòng là 64/6 Đào Duy Từ. Maps chỉ xác nhận được số 64. Hỏi chủ nhà pin lối vào 64/6."
+};
+const placeQuery = place => place.google ?
+  place.name + ", " + place.google.address : place.mapQuery;
+function mapsSearch(place) {
+  const params = new URLSearchParams({api:"1", query:placeQuery(place)});
+  if (place.google) params.set("query_place_id", place.google.id);
+  return "https://www.google.com/maps/search/?" + params;
+}
+function mapsDirections(stops) {
+  const first = stops[0];
+  const last = stops.at(-1);
+  const params = new URLSearchParams({
+    api:"1", destination:placeQuery(last), destination_place_id:last.google.id, travelmode:"driving"
+  });
+  if (stops.length === 1) params.set("dir_action", "navigate");
+  else {
+    params.set("origin", placeQuery(first));
+    params.set("origin_place_id", first.google.id);
+    const via = stops.slice(1,-1);
+    if (via.length) {
+      params.set("waypoints", via.map(placeQuery).join("|"));
+      params.set("waypoint_place_ids", via.map(place => place.google.id).join("|"));
+    }
+  }
+  return "https://www.google.com/maps/dir/?" + params;
+}
+function placeLink(place) {
+  return place.google ? mapsDirections([place]) : mapsSearch(place);
+}
 const placeSheet = document.getElementById("place-sheet");
 const app = document.querySelector(".app");
 const desktop = matchMedia("(min-width: 760px)");
@@ -810,7 +931,7 @@ const scrollByView = {timeline:0, map:0};
 
 function syncMapFrame(place) {
   const visible = desktop.matches || app.dataset.view === "map";
-  const query = place && placeQuery(place);
+  const query = place?.google && placeQuery(place);
   const src = visible && query ? "https://www.google.com/maps?" + new URLSearchParams({q:query, output:"embed"}) : "";
   mapFrame.hidden = !src;
   if (src && mapFrame.getAttribute("src") !== src) mapFrame.src = src;
@@ -838,13 +959,18 @@ function openPlace(id) {
   document.getElementById("sheet-title").textContent = place.name;
   document.getElementById("sheet-meta").textContent =
     plan.sourceLegend[place.source].label + " · " + statusLabels[place.status ?? "candidate"];
-  document.getElementById("sheet-address").textContent = place.mapQuery;
+  document.getElementById("sheet-address").textContent = place.google?.address ?? place.mapQuery;
   document.getElementById("sheet-price").textContent = priceLabel(place.priceEstimate) + (place.priceEstimate ? " / người" : "");
   document.getElementById("sheet-crowd").textContent = crowdLabels[place.crowdRisk] ?
     crowdLabels[place.crowdRisk] + " (ước tính)" : "Chưa có ước tính độ đông.";
   document.getElementById("sheet-note").textContent = place.notes ?? "";
-  document.getElementById("sheet-directions").href = mapsDirections(placeQuery(place));
-  document.getElementById("sheet-photos").href = mapsSearch(placeQuery(place));
+  document.getElementById("sheet-location").textContent = locationNotes[place.id] ?? "";
+  const directions = document.getElementById("sheet-directions");
+  directions.href = placeLink(place);
+  directions.textContent = place.google ? "Chỉ đường" : "Tra địa chỉ";
+  const photos = document.getElementById("sheet-photos");
+  photos.href = mapsSearch(place);
+  photos.hidden = !place.google;
   placeSheet.showModal();
 }
 
@@ -867,7 +993,7 @@ function renderChoice(slot, id) {
     </label>
     <div class="choice-end">
       <button type="button" class="maps" data-details="${id}" aria-label="Chi tiết ${name}">Chi tiết</button>
-      <a class="maps" target="_blank" rel="noopener" href="${mapsSearch(placeQuery(place))}" aria-label="Google Maps: ${name}">Maps</a>
+      <a class="maps" target="_blank" rel="noopener" href="${escapeHtml(mapsSearch(place))}" aria-label="Google Maps: ${name}">Maps</a>
     </div>
   </div>`;
 }
@@ -910,49 +1036,67 @@ function render() {
   renderMap(current.slots);
 }
 
+function renderRoute(stops) {
+  const actions = document.getElementById("route-actions");
+  const missing = [...new Set(stops.filter(place => !place.google).map(place => place.name))];
+  const segments = [];
+  let segment = [];
+  for (const stop of stops) {
+    if (!stop.google || segment.length === 5) {
+      if (segment.length > 1) segments.push(segment);
+      segment = stop.google ? segment.slice(-1) : [];
+    }
+    if (stop.google) segment.push(stop);
+  }
+  if (segment.length > 1) segments.push(segment);
+  const complete = !missing.length && stops.length <= 5;
+  const note = missing.length ? `Cần xác nhận pin của ${missing.join(" và ")}. Dùng nút ở từng điểm để đi riêng.` :
+    stops.length > 5 ? "Lộ trình được chia chặng để Google Maps trên điện thoại nhận đủ các điểm dừng." : "";
+  actions.innerHTML = (note ? `<p class="route-note alert">${escapeHtml(note)}</p>` : "") +
+    segments.map((items, i) =>
+      `<div class="actions"><a class="action" target="_blank" rel="noopener" href="${escapeHtml(mapsDirections(items))}">${complete ?
+        "Lộ trình cả ngày" : "Chặng " + (i + 1) + " · " + escapeHtml(items[0].name) + " → " + escapeHtml(items.at(-1).name)}</a></div>`
+    ).join("");
+}
+
 function renderMap(slots) {
-  const ids = [...new Set(slots.flatMap(slot => options(slot).filter(id => checked(slot, id))))];
-  const picks = ids.map(id => places.get(id));
-  const focused = picks.find(place => place.id === focusedPlaceId) ?? picks[0];
+  const ids = slots.flatMap(slot => options(slot).filter(id => checked(slot, id)));
+  const stops = ids.filter((id, i) => id !== ids[i - 1]).map(id => places.get(id));
+  const picks = [...new Set(stops)];
+  const focused = picks.find(place => place.id === focusedPlaceId) ?? picks.find(place => place.google) ?? picks[0];
   focusedPlaceId = focused?.id;
-  syncMapFrame(focused);
+  function showMap(place) {
+    syncMapFrame(place);
+    document.getElementById("maphint").textContent = !place ?
+      "Chọn địa điểm trong lịch trình để xem trên Google Maps." :
+      locationNotes[place.id] ?? "Chọn một địa điểm để xem trên bản đồ hoặc mở chỉ đường.";
+  }
+  showMap(focused);
   const list = document.getElementById("map-list");
   list.innerHTML = picks.map(place =>
     `<div class="map-place">
-      <button type="button" data-map-place="${place.id}" aria-pressed="${place.id === focusedPlaceId}">${escapeHtml(place.name)}</button>
-      <button type="button" class="maps" data-map-details="${place.id}" aria-label="Chi tiết ${escapeHtml(place.name)}">Chi tiết</button>
+      <div class="map-place-name">
+        <button type="button" data-map-place="${place.id}" aria-pressed="${place.id === focusedPlaceId}">${escapeHtml(place.name)}</button>
+        <span class="map-address">${escapeHtml(place.google?.address ?? "Cần xác nhận pin")}</span>
+      </div>
+      <div class="map-place-links">
+        <a class="maps" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}">${place.google ? "Chỉ đường" : "Tra địa chỉ"}</a>
+        <button type="button" class="maps" data-map-details="${place.id}" aria-label="Chi tiết ${escapeHtml(place.name)}">Chi tiết</button>
+      </div>
     </div>`
   ).join("");
   list.querySelectorAll("[data-map-place]").forEach(button => {
     button.onclick = () => {
       focusedPlaceId = button.dataset.mapPlace;
       list.querySelectorAll("[data-map-place]").forEach(item => item.setAttribute("aria-pressed", item === button));
-      const place = places.get(focusedPlaceId);
-      syncMapFrame(place);
-      if (picks.length > 5) document.getElementById("go").href = mapsSearch(placeQuery(place));
+      showMap(places.get(focusedPlaceId));
     };
   });
   list.querySelectorAll("[data-map-details]").forEach(button => {
     button.onclick = () => openPlace(button.dataset.mapDetails);
   });
   document.getElementById("count").textContent = picks.length + " đã chọn";
-  document.getElementById("maphint").textContent = picks.length ?
-    "Chọn một địa điểm trong danh sách để xem trên bản đồ." :
-    "Chọn địa điểm trong lịch trình để xem trên Google Maps.";
-
-  const queries = picks.map(placeQuery);
-  let url = focused ? mapsSearch(placeQuery(focused)) : mapsSearch("Đà Lạt");
-  if (queries.length === 1) url = mapsDirections(queries[0]);
-  if (queries.length > 1 && queries.length <= 5) {
-    const params = new URLSearchParams({
-      api:"1", origin:queries[0], destination:queries.at(-1), travelmode:"driving"
-    });
-    if (queries.length > 2) params.set("waypoints", queries.slice(1,-1).join("|"));
-    url = "https://www.google.com/maps/dir/?" + params;
-  }
-  const go = document.getElementById("go");
-  go.href = url;
-  go.textContent = queries.length > 1 && queries.length <= 5 ? "Lộ trình cả ngày" : "Mở Google Maps";
+  renderRoute(stops);
 }
 
 placeSheet.addEventListener("click", event => {
