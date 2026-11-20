@@ -24,7 +24,6 @@
   --body: 400 14px/20px; --metadata: 400 12px/16px; --caption: 500 11px/16px;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
   --thumbnail-width: 104px; --thumbnail-height: 76px;
-  --source-icon-size: 14px;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -37,11 +36,10 @@ a { color: inherit; }
 :focus-visible { outline: 2px solid var(--text-secondary); outline-offset: var(--s1); }
 .icon-library { position: absolute; width: 0; height: 0; overflow: hidden; }
 .icon { width: var(--s5); height: var(--s5); flex: none; }
-.source .icon { width: var(--source-icon-size); height: var(--source-icon-size); }
 .app { max-width: 680px; margin: auto; padding: env(safe-area-inset-top) var(--s4) max(var(--s6), env(safe-area-inset-bottom)); }
 .topbar { display: flex; justify-content: space-between; align-items: center; gap: var(--s3); padding: var(--s5) 0 var(--s3); }
 .topbar h1, .sheet-head h2 { font: var(--title) var(--font); letter-spacing: -.045em; }
-.sub, .source, .status, .map-note, .sheet-credit { color: var(--text-secondary); font: var(--metadata) var(--font); }
+.sub, .status, .map-note, .sheet-credit { color: var(--text-secondary); font: var(--metadata) var(--font); }
 .topbar { padding-top: var(--s6); padding-bottom: var(--s5); }
 .topbar .sub { font: var(--body) var(--font); margin-top: var(--s1); }
 .toolbar { display: flex; flex: none; gap: var(--s1); }
@@ -77,9 +75,7 @@ a { color: inherit; }
 }
 .place-button { display: grid; grid-template-columns: 80px minmax(0,1fr); gap: var(--s3); align-items: center; min-height: var(--tap); min-width: 0; border: 0; padding: 0; text-align: left; background: transparent; border-radius: var(--r8); }
 .name { display: block; overflow-wrap: anywhere; font: var(--place-name) var(--font); }
-.badges, .source, .meta-icon { display: inline-flex; align-items: center; gap: var(--s1); }
-.badges { display: flex; flex-wrap: wrap; column-gap: var(--s2); }
-.status.booked, .status.approved-not-booked { font-weight: 650; }
+.status.booked, .status.approved-not-booked { display: block; font-weight: 650; }
 .place-media { display: grid; place-items: center; overflow: hidden; width: 100%; aspect-ratio: 4/3; background: var(--surface-secondary); color: var(--border-strong); border-radius: var(--r8); }
 .place-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .pick { display: grid; place-items: center; min-height: var(--tap); width: var(--tap); cursor: pointer; }
@@ -118,7 +114,8 @@ button:disabled { cursor: default; opacity: .55; }
 .sheet-media { margin-bottom: var(--s3); }
 .sheet-media .place-media { aspect-ratio: 16/9; border-radius: var(--r16); }
 .sheet-info { display: grid; gap: var(--s2); margin-top: var(--s3); color: var(--text-secondary); font: var(--body) var(--font); }
-.sheet-info p:empty { display: none; }
+.sheet-info p:empty, #sheet-meta:empty { display: none; }
+#sheet-title:focus { outline: none; }
 .sheet-info p { display: flex; align-items: start; gap: var(--s2); }
 .sheet-gallery { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(120px, 44%); gap: var(--s2); overflow-x: auto; margin-top: var(--s4); }
 .sheet-credit { display: block; padding-top: var(--s1); }
@@ -170,13 +167,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     <symbol id="lucide-navigation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11" /></symbol>
     <symbol id="lucide-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" />
   <polyline points="12 6 12 12 16 14" /></symbol>
-    <symbol id="lucide-user-round" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5" />
-  <path d="M20 21a8 8 0 0 0-16 0" /></symbol>
-    <symbol id="lucide-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
-  <path d="M20 3v4" />
-  <path d="M22 5h-4" />
-  <path d="M4 17v2" />
-  <path d="M5 18H3" /></symbol>
     <symbol id="lucide-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
   </svg>
   <main class="app" data-view="timeline">
@@ -212,7 +202,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     <div id="sheet-media" class="sheet-media"></div>
     <header class="sheet-head">
       <h2 id="sheet-title" tabindex="-1" autofocus></h2>
-      <p id="sheet-meta" class="badges"></p>
+      <p id="sheet-meta" class="status"></p>
     </header>
     <div class="actions">
       <a id="sheet-directions" class="action" target="_blank" rel="noopener">Chỉ đường</a>
@@ -1322,7 +1312,6 @@ const crowdLabels = {
   "medium-uncertain":"Mức đông vừa · chưa chắc chắn"
 };
 const icon = name => `<svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-${name}"></use></svg>`;
-const sourceIcons = {human:"user-round", ai:"sparkles"};
 const locationNotes = {
   ga49: "Maps trả về số 55/5. Xin pin đúng từ Ga49.",
   airbnb: "Maps chỉ tìm được số 64. Xin chủ nhà pin lối vào 64/6."
@@ -1395,10 +1384,6 @@ returnToPlan.addEventListener("click", () => {
 });
 window.addEventListener("popstate", () => switchView(location.hash === "#ban-do" ? "map" : "timeline"));
 
-function sourceLabel(place) {
-  return `<span class="source ${place.source}">${icon(sourceIcons[place.source])}${escapeHtml(plan.sourceLegend[place.source].label)}</span>`;
-}
-
 /** Media entries are attached to the matching place in the itinerary data. */
 /** @param {PlacePhoto|undefined} photo */
 function placeMedia(photo, thumbnail = false) {
@@ -1419,8 +1404,7 @@ function openPlace(id) {
   gallery.hidden = photos.length < 2;
   gallery.innerHTML = photos.slice(1).map(creditedPhoto).join("");
   document.getElementById("sheet-title").textContent = place.name;
-  document.getElementById("sheet-meta").innerHTML = sourceLabel(place) +
-    (place.status ? `<span class="status">${statusLabels[place.status]}</span>` : "");
+  document.getElementById("sheet-meta").textContent = statusLabels[place.status] ?? "";
   document.getElementById("sheet-address").innerHTML = icon("map-pin") + escapeHtml(place.google?.address ?? place.mapQuery);
   document.getElementById("sheet-hours").innerHTML = place.hours ? icon("clock") + escapeHtml(place.hours) : "";
   document.getElementById("sheet-price").textContent = place.priceEstimate ? "Khoảng " + priceLabel(place.priceEstimate) + " / người" : "";
@@ -1445,7 +1429,7 @@ function renderChoice(slot, id) {
       ${placeMedia(place.photos?.[0], true)}
       <span>
         <span class="name">${name}</span>
-        <span class="badges">${sourceLabel(place)}${status !== "candidate" ? `<span class="status ${status}">${statusLabels[status]}</span>` : ""}</span>
+        ${status !== "candidate" ? `<span class="status ${status}">${statusLabels[status]}</span>` : ""}
       </span>
     </button>
     <label class="pick" for="${inputId}">
@@ -1537,7 +1521,7 @@ function renderMap(slots) {
     `<div class="map-place">
       <button type="button" class="place-button" data-map-details="${place.id}" aria-label="Chi tiết ${escapeHtml(place.name)}">
         ${placeMedia(place.photos?.[0], true)}
-        <span><span class="name">${i + 1}. ${escapeHtml(place.name)}</span>${sourceLabel(place)}</span>
+        <span class="name">${i + 1}. ${escapeHtml(place.name)}</span>
       </button>
       <a class="action alt" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}"
         aria-label="${place.google ? "Chỉ đường" : "Tra địa chỉ"}: ${escapeHtml(place.name)}">${icon(place.google ? "navigation" : "map-pin")}${place.google ? "Chỉ đường" : "Tra địa chỉ"}</a>
