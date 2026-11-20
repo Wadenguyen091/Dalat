@@ -168,6 +168,16 @@
       #map { height: 390px; }
       .place-sheet { inset: 0; margin: auto; border-radius: 24px; }
     }
+    .day-area { margin: 2px 0 10px; color: var(--muted); font-size: 14px; }
+    .slot-kind { margin: -5px 0 8px; color: var(--muted); font-size: 13px; }
+    .badges { display: flex; flex-wrap: wrap; gap: 4px 7px; margin: 4px 0; }
+    .source, .status { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700; color: var(--muted); }
+    .source svg { width: 14px; height: 14px; }
+    .source.ai { color: #6845a0; }
+    .source.human, .status.booked { color: var(--accent); }
+    .status.approved-not-booked { color: #795013; }
+    .choice .maps { min-width: 44px; }
+    .sheet-copy:empty { display: none; }
   </style>
 </head>
 <body>
@@ -181,16 +191,19 @@
     <div class="layout">
       <section class="mapcard" aria-labelledby="map-title">
         <div class="maphead"><h2 id="map-title">Địa điểm đã chọn</h2><span id="count" aria-live="polite"></span></div>
-        <p class="maphint">Chạm pin để xem chi tiết và chỉ đường.</p>
+        <p id="maphint" class="maphint" aria-live="polite">Chạm pin để xem chi tiết và chỉ đường.</p>
         <div id="map" aria-label="Bản đồ địa điểm đã chọn"></div>
         <div class="actions">
           <a id="go" class="action" target="_blank" rel="noopener">Lộ trình cả ngày</a>
           <button id="share" class="action alt" type="button">Chia sẻ</button>
         </div>
       </section>
-      <section class="timeline" id="timeline" aria-label="Khung giờ và địa điểm"></section>
+      <section aria-label="Lịch trình trong ngày">
+        <p id="area" class="day-area"></p>
+        <div class="timeline" id="timeline"></div>
+      </section>
     </div>
-    <p class="footer">Giá ước tính · Pin tham khảo · Kiểm tra địa điểm trước khi chạy xe.</p>
+    <p class="footer">Giá ước tính theo người. Độ đông và pin chỉ để tham khảo. Ga49 và Airbnb là hai điểm đã đặt.</p>
   </main>
   <dialog id="place-sheet" class="place-sheet" aria-labelledby="sheet-title">
     <div class="sheet-head">
@@ -201,80 +214,752 @@
     <p id="sheet-address" class="sheet-address"></p>
     <p id="sheet-price" class="sheet-copy"></p>
     <p id="sheet-crowd" class="sheet-copy"></p>
+    <p id="sheet-note" class="sheet-copy"></p>
+    <p class="sheet-copy">Xem ảnh địa điểm trên Google Maps.</p>
     <div class="actions">
       <a id="sheet-directions" class="action" target="_blank" rel="noopener">Chỉ đường</a>
       <a id="sheet-photos" class="action alt" target="_blank" rel="noopener">Ảnh trên Maps</a>
     </div>
   </dialog>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script id="plan-data" type="application/json">
+{
+  "version": "5.0",
+  "trip": {
+    "title": "Da Lat Escape",
+    "dates": [
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23"
+    ],
+    "people": 6,
+    "transport": "self-rented vehicles",
+    "airbnb": "64/6 Đào Duy Từ, Đà Lạt",
+    "arrival": "2026-11-21T08:00:00+07:00",
+    "checkin": "2026-11-21T15:00:00+07:00",
+    "checkout": "2026-11-23T11:00:00+07:00",
+    "departure": "2026-11-23T22:00:00+07:00",
+    "arrivalRest": "Ga49, 55 Hùng Vương (booked)"
+  },
+  "sourceLegend": {
+    "human": {
+      "icon": "user-round",
+      "label": "Human",
+      "meaning": "From group's Google Sheet"
+    },
+    "ai": {
+      "icon": "sparkles",
+      "label": "AI",
+      "meaning": "Suggested by ERIS"
+    }
+  },
+  "disclaimer": "All prices in VND per person are planning estimates, not confirmed quotations. Crowd risk is inferred, not live Google Maps Popular Times. Map searches are not verified coordinates. No reservations except Ga49 and Airbnb have been confirmed.",
+  "places": [
+    {
+      "id": "ga49",
+      "name": "Ga49",
+      "source": "ai",
+      "category": "rest",
+      "mapQuery": "Ga49 55 Hùng Vương Đà Lạt",
+      "priceEstimate": null,
+      "status": "booked",
+      "coordinates": [
+        11.948,
+        108.47
+      ]
+    },
+    {
+      "id": "airbnb",
+      "name": "Airbnb 64/6 Đào Duy Từ",
+      "source": "ai",
+      "category": "stay",
+      "mapQuery": "64/6 Đào Duy Từ Đà Lạt",
+      "priceEstimate": null,
+      "status": "booked",
+      "coordinates": [
+        11.926,
+        108.429
+      ]
+    },
+    {
+      "id": "banhcan-lanh",
+      "name": "Bánh căn cô Lãnh",
+      "source": "human",
+      "category": "breakfast",
+      "mapQuery": "69 Hoàng Hoa Thám Đà Lạt",
+      "priceEstimate": null
+    },
+    {
+      "id": "bun-ba-tam",
+      "name": "Bún thịt nướng bà Tám",
+      "source": "human",
+      "category": "breakfast",
+      "mapQuery": "38A Hoàng Văn Thụ Đà Lạt",
+      "priceEstimate": null
+    },
+    {
+      "id": "banhcan-31",
+      "name": "Bánh căn 31 Nguyễn Trãi",
+      "source": "human",
+      "category": "breakfast",
+      "mapQuery": "31 Nguyễn Trãi Đà Lạt",
+      "priceEstimate": null
+    },
+    {
+      "id": "xiumai-79",
+      "name": "Bánh mì xíu mại 79",
+      "source": "human",
+      "category": "breakfast",
+      "mapQuery": "1 Thông Thiên Học Đà Lạt",
+      "priceEstimate": null
+    },
+    {
+      "id": "bep-khoi",
+      "name": "Bếp Khói – Sườn Cay Khổng Lồ",
+      "source": "human",
+      "category": "lunch",
+      "mapQuery": "42 Phan Chu Trinh Đà Lạt",
+      "priceEstimate": null,
+      "coordinates": [
+        11.9511723,
+        108.4654011
+      ]
+    },
+    {
+      "id": "ku-boc",
+      "name": "Cơm gà sốt trứng Ku Bốc",
+      "source": "human",
+      "category": "lunch",
+      "mapQuery": "36 Mạc Đĩnh Chi Đà Lạt",
+      "priceEstimate": null
+    },
+    {
+      "id": "tay-bac",
+      "name": "Tây Bắc Quán",
+      "source": "human",
+      "category": "lunch",
+      "mapQuery": "27 Đèo Mimosa Đà Lạt",
+      "priceEstimate": null
+    },
+    {
+      "id": "hoi-no",
+      "name": "Tiệm Cơm Hồi Nớ",
+      "source": "human",
+      "category": "lunch",
+      "mapQuery": "4 Trần Hưng Đạo Đà Lạt",
+      "priceEstimate": null,
+      "coordinates": [11.937341, 108.447210]
+    },
+    {
+      "id": "thiet-168",
+      "name": "Thiết 168",
+      "source": "human",
+      "category": "lunch",
+      "mapQuery": "168 Phan Đình Phùng Đà Lạt",
+      "priceEstimate": null,
+      "coordinates": [11.9476483, 108.4358889]
+    },
+    {
+      "id": "bunbo-songhuong",
+      "name": "Bún bò thố đá Sông Hương",
+      "source": "human",
+      "category": "breakfast",
+      "mapQuery": "Bún bò thố đá Sông Hương Cầu Mạc Đĩnh Chi Đà Lạt",
+      "priceEstimate": null
+    },
+    {
+      "id": "duoi-tan",
+      "name": "Dưới Tán Anh Đào",
+      "source": "ai",
+      "category": "dinner",
+      "mapQuery": "29B Hùng Vương Đà Lạt Dưới Tán Anh Đào",
+      "priceEstimate": {
+        "min": 250000,
+        "max": 400000
+      },
+      "status": "approved-not-booked",
+      "crowdRisk": "high-weekend-evening",
+      "notes": "Approved by user; acoustic and table for 6 require confirmation",
+      "coordinates": [
+        11.947,
+        108.472
+      ]
+    },
+    {
+      "id": "thenh-thang",
+      "name": "Thênh Thang",
+      "source": "ai",
+      "category": "view-cafe",
+      "mapQuery": "Thênh Thang cafe Đà Lạt",
+      "priceEstimate": {
+        "min": 50000,
+        "max": 70000
+      },
+      "crowdRisk": "medium-high-weekend",
+      "coordinates": [
+        11.96,
+        108.487
+      ]
+    },
+    {
+      "id": "mountain-chill",
+      "name": "Mountain Chill",
+      "source": "ai",
+      "category": "view-cafe",
+      "mapQuery": "Mountain Chill 118 Hùng Vương Đà Lạt",
+      "priceEstimate": {
+        "min": 55000,
+        "max": 80000
+      },
+      "crowdRisk": "high-sunset",
+      "coordinates": [
+        11.958,
+        108.488
+      ]
+    },
+    {
+      "id": "rung-na-uy",
+      "name": "Rừng Na Uy",
+      "source": "ai",
+      "category": "view-cafe",
+      "mapQuery": "Rừng Na Uy cafe Đà Lạt",
+      "priceEstimate": {
+        "min": 45000,
+        "max": 85000
+      },
+      "crowdRisk": "medium-uncertain",
+      "coordinates": [
+        11.967,
+        108.505
+      ]
+    },
+    {
+      "id": "cheo-veooo",
+      "name": "Cheo Veooo",
+      "source": "ai",
+      "category": "view-cafe",
+      "mapQuery": "Cheo Veooo Đà Lạt",
+      "priceEstimate": {
+        "min": 45000,
+        "max": 70000
+      },
+      "crowdRisk": "high-sunset",
+      "coordinates": [
+        11.957,
+        108.484
+      ]
+    },
+    {
+      "id": "reo",
+      "name": "Reo 20° Chill",
+      "source": "ai",
+      "category": "sup",
+      "mapQuery": "Reo 20 Chill Hồ Tuyền Lâm Đà Lạt",
+      "priceEstimate": {
+        "min": 250000,
+        "max": 250000
+      },
+      "crowdRisk": "unknown",
+      "notes": "SUP estimate only; reserve 6 places and check weather",
+      "coordinates": [
+        11.894,
+        108.427
+      ]
+    },
+    {
+      "id": "seen",
+      "name": "The Seen House",
+      "source": "ai",
+      "category": "lakeside-cafe",
+      "mapQuery": "The Seen House Hồ Tuyền Lâm Đà Lạt",
+      "priceEstimate": {
+        "min": 40000,
+        "max": 80000
+      },
+      "crowdRisk": "unknown",
+      "coordinates": [
+        11.896,
+        108.431
+      ]
+    },
+    {
+      "id": "thong",
+      "name": "Thông Trước Nhà",
+      "source": "ai",
+      "category": "forest-cafe",
+      "mapQuery": "31/13 Đường 3/4 Đà Lạt Thông Trước Nhà",
+      "priceEstimate": {
+        "min": 40000,
+        "max": 80000
+      },
+      "crowdRisk": "unknown",
+      "coordinates": [
+        11.917,
+        108.447
+      ]
+    },
+    {
+      "id": "miet",
+      "name": "Miết Miết",
+      "source": "ai",
+      "category": "forest-cafe",
+      "mapQuery": "Miết Miết Đà Lạt",
+      "priceEstimate": null,
+      "crowdRisk": "unknown",
+      "coordinates": [
+        11.918,
+        108.448
+      ]
+    },
+    {
+      "id": "la-viet",
+      "name": "Là Việt Coffee",
+      "source": "ai",
+      "category": "coffee",
+      "mapQuery": "Là Việt Coffee Đà Lạt",
+      "priceEstimate": {
+        "min": 30000,
+        "max": 75000
+      },
+      "crowdRisk": "unknown",
+      "coordinates": [
+        11.953,
+        108.438
+      ]
+    },
+    {
+      "id": "hidden-land",
+      "name": "Hidden Land",
+      "source": "ai",
+      "category": "forest-cafe",
+      "mapQuery": "Hidden Land Đà Lạt",
+      "priceEstimate": {
+        "min": 30000,
+        "max": 60000
+      },
+      "crowdRisk": "unknown"
+    },
+    {
+      "id": "rung-la-kim",
+      "name": "Rừng Lá Kim",
+      "source": "ai",
+      "category": "forest-bbq",
+      "mapQuery": "Rừng Lá Kim Cafe BBQ An Sơn Đà Lạt",
+      "priceEstimate": null,
+      "crowdRisk": "unknown"
+    }
+  ],
+  "days": [
+    {
+      "date": "2026-11-21",
+      "label": "Thứ Bảy",
+      "area": "Ga49 → Airbnb → Hùng Vương",
+      "slots": [
+        {
+          "id": "21-01",
+          "time": "08:00–11:30",
+          "title": "Tập kết & nghỉ",
+          "kind": "fixed",
+          "options": [
+            "ga49"
+          ],
+          "selected": [
+            "ga49"
+          ]
+        },
+        {
+          "id": "21-02",
+          "time": "11:30–12:45",
+          "title": "Ăn trưa",
+          "kind": "choose",
+          "options": [
+            "bep-khoi",
+            "hoi-no",
+            "tay-bac"
+          ],
+          "selected": [],
+          "note": "Tây Bắc Quán lệch tuyến, chỉ chọn nếu chủ động đổi hướng"
+        },
+        {
+          "id": "21-03",
+          "time": "12:45–14:30",
+          "title": "Nghỉ tại Ga49",
+          "kind": "fixed",
+          "options": [
+            "ga49"
+          ],
+          "selected": [
+            "ga49"
+          ]
+        },
+        {
+          "id": "21-04",
+          "time": "15:00–16:00",
+          "title": "Check-in Airbnb",
+          "kind": "fixed",
+          "options": [
+            "airbnb"
+          ],
+          "selected": [
+            "airbnb"
+          ]
+        },
+        {
+          "id": "21-05",
+          "time": "16:00–17:45",
+          "title": "Cà phê view đồi",
+          "kind": "choose",
+          "options": [
+            "thenh-thang",
+            "rung-na-uy",
+            "mountain-chill",
+            "cheo-veooo",
+            "hidden-land"
+          ],
+          "selected": [],
+          "note": "Choose only one; sunset crowd risk, skip if tired"
+        },
+        {
+          "id": "21-06",
+          "time": "18:15–21:30",
+          "title": "Ăn tối & acoustic",
+          "kind": "choose",
+          "options": [
+            "duoi-tan",
+            "rung-la-kim"
+          ],
+          "selected": [
+            "duoi-tan"
+          ],
+          "note": "Approved, not reserved; Rừng Lá Kim is not same corridor"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-22",
+      "label": "Chủ nhật",
+      "area": "Hồ Tuyền Lâm / phía Nam",
+      "slots": [
+        {
+          "id": "22-01",
+          "time": "06:30–07:15",
+          "title": "Ăn sáng",
+          "kind": "choose",
+          "options": [
+            "xiumai-79",
+            "banhcan-31",
+            "bunbo-songhuong",
+            "bun-ba-tam"
+          ],
+          "selected": []
+        },
+        {
+          "id": "22-02",
+          "time": "07:15–08:00",
+          "title": "Di chuyển tới Tuyền Lâm",
+          "kind": "travel",
+          "options": [],
+          "selected": []
+        },
+        {
+          "id": "22-03",
+          "time": "08:00–10:00",
+          "title": "Hồ & SUP",
+          "kind": "choose",
+          "options": [
+            "reo",
+            "seen"
+          ],
+          "selected": [],
+          "note": "SUP only if reserved and weather permits"
+        },
+        {
+          "id": "22-04",
+          "time": "10:00–11:30",
+          "title": "Ngắm hồ / nghỉ",
+          "kind": "choose",
+          "options": [
+            "seen",
+            "reo"
+          ],
+          "selected": []
+        },
+        {
+          "id": "22-05",
+          "time": "11:30–13:00",
+          "title": "Ăn trưa",
+          "kind": "choose",
+          "options": [
+            "tay-bac",
+            "hoi-no",
+            "bep-khoi"
+          ],
+          "selected": [],
+          "note": "All listed restaurants require route detour or return; do not mark as confirmed best"
+        },
+        {
+          "id": "22-06",
+          "time": "13:00–15:00",
+          "title": "Rừng thông",
+          "kind": "optional",
+          "options": [
+            "thong",
+            "miet",
+            "rung-la-kim"
+          ],
+          "selected": []
+        },
+        {
+          "id": "22-07",
+          "time": "15:00–17:30",
+          "title": "Nghỉ tại Airbnb",
+          "kind": "fixed",
+          "options": [
+            "airbnb"
+          ],
+          "selected": [
+            "airbnb"
+          ]
+        },
+        {
+          "id": "22-08",
+          "time": "18:00–20:30",
+          "title": "Ăn tối",
+          "kind": "choose",
+          "options": [
+            "duoi-tan",
+            "rung-la-kim",
+            "thiet-168",
+            "ku-boc"
+          ],
+          "selected": [],
+          "note": "Do not visit Dưới Tán Anh Đào twice unless explicitly chosen"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-23",
+      "label": "Thứ Hai",
+      "area": "Theo điểm gửi vali và điểm đón xe",
+      "slots": [
+        {
+          "id": "23-01",
+          "time": "07:30–08:30",
+          "title": "Ăn sáng",
+          "kind": "choose",
+          "options": [
+            "bun-ba-tam",
+            "bunbo-songhuong",
+            "banhcan-31",
+            "xiumai-79",
+            "banhcan-lanh"
+          ],
+          "selected": []
+        },
+        {
+          "id": "23-02",
+          "time": "08:30–11:00",
+          "title": "Thu dọn & checkout",
+          "kind": "fixed",
+          "options": [
+            "airbnb"
+          ],
+          "selected": [
+            "airbnb"
+          ]
+        },
+        {
+          "id": "23-03",
+          "time": "11:00–11:45",
+          "title": "Gửi vali",
+          "kind": "required-unresolved",
+          "options": [],
+          "selected": [],
+          "note": "Must confirm secure storage for 6 travelers until 20:00–20:30"
+        },
+        {
+          "id": "23-04",
+          "time": "12:00–13:30",
+          "title": "Ăn trưa",
+          "kind": "choose",
+          "options": [
+            "ku-boc",
+            "thiet-168",
+            "hoi-no",
+            "bep-khoi",
+            "tay-bac"
+          ],
+          "selected": []
+        },
+        {
+          "id": "23-05",
+          "time": "14:00–17:00",
+          "title": "Cà phê ngắm thiên nhiên",
+          "kind": "choose",
+          "options": [
+            "rung-na-uy",
+            "mountain-chill",
+            "cheo-veooo",
+            "thenh-thang",
+            "hidden-land"
+          ],
+          "selected": [],
+          "note": "Choose only one after luggage storage and pickup point are known"
+        },
+        {
+          "id": "23-06",
+          "time": "17:00–19:30",
+          "title": "Ăn tối & nghỉ",
+          "kind": "choose",
+          "options": [
+            "thiet-168",
+            "ku-boc",
+            "la-viet"
+          ],
+          "selected": [],
+          "note": "Là Việt is coffee, not a full dinner replacement"
+        },
+        {
+          "id": "23-07",
+          "time": "19:30–22:00",
+          "title": "Lấy vali & lên xe",
+          "kind": "required",
+          "options": [],
+          "selected": [],
+          "note": "Bus departure 22:00; pickup address unknown"
+        }
+      ]
+    }
+  ],
+  "uiRules": {
+    "mobileFirst": true,
+    "maxOptionsPerSlot": 5,
+    "allowMultiSelect": true,
+    "mapPinsOnly": true,
+    "noFakeStraightLines": true,
+    "navigate": "Google Maps URL using verified place query",
+    "showPrice": true,
+    "showSourceIcon": true,
+    "sourceIcons": {
+      "human": "user-round",
+      "ai": "sparkles"
+    },
+    "defaultView": "timeline-and-pin-map",
+    "statuses": [
+      "booked",
+      "approved-not-booked",
+      "candidate"
+    ],
+    "persistSelection": "shareable link or app state",
+    "imageRule": "Use licensed/verified place images; do not assume image URLs"
+  }
+}
+  </script>
   <script>
-const places={
-ga:["Ga49","Ga49 Dalat 55 Hung Vuong",11.948,108.47,0,"Đã đặt"],
-home:["Airbnb","64/6 Dao Duy Tu Da Lat",11.926,108.429,0,"64/6 Đào Duy Từ"],
-thenh:["Thênh Thang","Thenh Thang Cafe Da Lat",11.96,108.487,60000,"View đồi · 20–30 phút"],
-mountain:["Mountain Chill","Mountain Chill 118 Hung Vuong Da Lat",11.958,108.488,70000,"View rộng · dễ đông"],
-rung:["Rừng Na Uy","Rung Na Uy Cafe Da Lat",11.967,108.505,65000,"Nhà gỗ · rừng thông"],
-cheo:["Cheo Veooo","Cheo Veooo Da Lat",11.957,108.484,60000,"View đồi · dễ đông"],
-dinner:["Dưới Tán Anh Đào","Duoi Tan Anh Dao 29B Hung Vuong Da Lat",11.947,108.472,330000,"Ăn tối · acoustic"],
-reo:["Reo 20° Chill","Reo 20 Chill Tuyen Lam Da Lat",11.894,108.427,250000,"SUP · cần đặt trước"],
-seen:["The Seen House","The Seen House Tuyen Lam Da Lat",11.896,108.431,70000,"View hồ · nhà kính"],
-thong:["Thông Trước Nhà","Thong Truoc Nha 31/13 Duong 3/4 Da Lat",11.917,108.447,65000,"Rừng thông"],
-miet:["Miết Miết","Miet Miet Cafe Da Lat",11.918,108.448,70000,"Cabin trong rừng"],
-laviet:["Là Việt Coffee","La Viet Coffee Da Lat",11.953,108.438,65000,"Specialty coffee"]
+const plan = JSON.parse(document.getElementById("plan-data").textContent);
+const days = plan.days;
+const places = new Map(plan.places.map(place => [place.id, place]));
+const maxOptions = Math.min(5, plan.uiRules.maxOptionsPerSlot);
+const options = slot => slot.options.slice(0, maxOptions);
+const storageKey = "dalat-v5";
+let day = 0;
+let selected = {};
+
+function readSelections(value) {
+  const parsed = JSON.parse(value);
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+  return Object.fromEntries(days.flatMap(({slots}) => slots
+    .filter(slot => slot.kind !== "fixed" && Array.isArray(parsed[slot.id]))
+    .map(slot => [slot.id, options(slot).filter(id => parsed[slot.id].includes(id))])));
+}
+
+try { selected = readSelections(localStorage.getItem(storageKey)); } catch {}
+const shared = new URLSearchParams(location.search).get("plan");
+if (shared) {
+  try {
+    const raw = JSON.parse(atob(shared));
+    if (raw.version === plan.version) selected = readSelections(JSON.stringify(raw.selected));
+  } catch {}
+}
+const checked = (slot, id) => (selected[slot.id] ?? slot.selected).includes(id);
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character =>
+  ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"})[character]);
+const dayLabel = date => date.slice(8, 10) + "/" + date.slice(5, 7);
+const number = new Intl.NumberFormat("vi-VN");
+const priceLabel = price => {
+  if (!price) return "Chưa có giá";
+  const min = number.format(price.min);
+  return (price.min === price.max ? min : min + "–" + number.format(price.max)) + " ₫";
 };
-const days=[
-{label:"21 Th 7",slots:[["08:00–14:30","Tập kết · nghỉ",["ga"],"fixed",""],["15:00–16:00","Nhận phòng",["home"],"fixed",""],["16:00–18:00","Cà phê ngắm cảnh",["thenh","mountain","rung","cheo"],"single","Chọn 1 · bỏ nếu đông"],["18:15–21:30","Ăn tối",["dinner"],"multi","Đã duyệt · chưa đặt bàn"]]},
-{label:"22 CN",slots:[["07:00–10:00","Hồ Tuyền Lâm",["reo","seen"],"single","SUP cần xác nhận suất"],["10:00–12:00","Cà phê · thiên nhiên",["seen","thong","miet"],"single","Chọn 1"],["12:00–14:00","Ăn trưa",[],"note","Quán ăn chưa chốt"],["14:00–17:00","Nghỉ / đi thêm",["thong","miet"],"optional","Không bắt buộc"],["18:00–21:30","Buổi tối",["dinner"],"optional","Chỉ đi nếu chưa ghé ngày 21"]]},
-{label:"23 Th 2",slots:[["08:00–11:00","Ăn sáng · trả phòng",["home"],"fixed","Checkout 11:00"],["11:00–12:00","Gửi hành lý",[],"note","Cần chốt nơi gửi 6 người đến tối"],["12:00–14:00","Ăn trưa",[],"note","Theo vị trí gửi vali"],["14:00–17:00","Cà phê view rừng",["rung","mountain","cheo","thenh"],"single","Chọn 1 · ưu tiên thuận đường"],["17:00–19:30","Ăn tối · nghỉ",["laviet"],"optional","Là Việt là option cà phê"],["19:30–22:00","Lấy vali · lên xe",[],"note","Xe về 22:00"]]}];
-let day=0,selected={};try{selected=JSON.parse(localStorage.getItem("dalat-v2")||"{}")}catch{};const query=new URLSearchParams(location.search).get("plan");if(query)try{selected=JSON.parse(decodeURIComponent(escape(atob(query))))}catch{}
-function on(i,id){let slot=days[day].slots[i],k=day+"-"+i;return selected[k]!==undefined?selected[k].includes(id):slot[3]==="fixed"||((slot[3]==="single"||slot[3]==="multi")&&slot[2][0]===id)}
-const map=L.map("map",{scrollWheelZoom:false,zoomControl:false}).setView([11.94,108.45],12);L.control.zoom({position:"bottomright"}).addTo(map);L.tileLayer("https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",{maxZoom:18,attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://www.hotosm.org/">HOT</a> · <a href="https://openstreetmap.fr/">OSM France</a>'}).addTo(map);const layer=L.layerGroup().addTo(map);
-const placeSheet = document.getElementById("place-sheet");
-const crowdNotes = {
-  mountain: "Có ghi chú dễ đông. Nhóm nên giữ một quán dự phòng.",
-  cheo: "Có ghi chú dễ đông. Nhóm nên giữ một quán dự phòng."
+const statusLabels = {booked:"Đã đặt", "approved-not-booked":"Đã duyệt · chưa đặt", candidate:"Đề xuất"};
+const slotLabels = {fixed:"Đã lên lịch", travel:"Di chuyển", optional:"Tùy chọn", required:"Cần thực hiện", "required-unresolved":"Cần xác nhận"};
+const crowdLabels = {
+  "high-weekend-evening":"Dễ đông tối cuối tuần",
+  "medium-high-weekend":"Có thể đông cuối tuần",
+  "high-sunset":"Dễ đông lúc hoàng hôn",
+  "medium-uncertain":"Mức đông vừa · chưa chắc chắn"
 };
-const priceLabel = price => price ? "~" + Math.round(price / 1000) + "k ₫" : "Chưa ghi giá";
+const sourceIcons = {
+  human:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10" cy="6" r="3"/><path d="M4 17v-1a6 6 0 0 1 12 0v1"/></svg>',
+  ai:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="m8 2 1.6 4.4L14 8l-4.4 1.6L8 14l-1.6-4.4L2 8l4.4-1.6L8 2Zm7 9 1 2.8 2.8 1L16 16l-1 2.8-1-2.8-2.8-1.2 2.8-1 1-2.8Z"/></svg>'
+};
 const mapsSearch = query => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
 const mapsDirections = query => "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(query) + "&travelmode=driving&dir_action=navigate";
+const placeQuery = place => place.mapQuery.toLocaleLowerCase("vi").includes(place.name.toLocaleLowerCase("vi"))
+  ? place.mapQuery : place.name + ", " + place.mapQuery;
+const placeSheet = document.getElementById("place-sheet");
+const mapCenter = [11.94,108.45];
+const map = L.map("map", {scrollWheelZoom:false, zoomControl:false}).setView(mapCenter, 12);
+L.control.zoom({position:"bottomright"}).addTo(map);
+L.tileLayer("https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+  maxZoom:18,
+  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://www.hotosm.org/">HOT</a> · <a href="https://openstreetmap.fr/">OSM France</a>'
+}).addTo(map);
+const layer = L.layerGroup().addTo(map);
 
 function openPlace(id) {
-  const [name, query, , , price, note] = places[id];
-  setSheetText("sheet-title", name);
-  setSheetText("sheet-meta", note.replace(/ · dễ đông$/, ""));
-  setSheetText("sheet-address", query);
-  setSheetText("sheet-price", priceLabel(price));
-  setSheetText("sheet-crowd", crowdNotes[id] || "Chưa có ghi chú về độ đông.");
-  document.getElementById("sheet-photos").href = mapsSearch(query);
-  document.getElementById("sheet-directions").href = mapsDirections(query);
+  const place = places.get(id);
+  document.getElementById("sheet-title").textContent = place.name;
+  document.getElementById("sheet-meta").textContent =
+    plan.sourceLegend[place.source].label + " · " + statusLabels[place.status ?? "candidate"];
+  document.getElementById("sheet-address").textContent = place.mapQuery;
+  document.getElementById("sheet-price").textContent = priceLabel(place.priceEstimate) + (place.priceEstimate ? " / người" : "");
+  document.getElementById("sheet-crowd").textContent = crowdLabels[place.crowdRisk] ?
+    crowdLabels[place.crowdRisk] + " (ước tính)" : "Chưa có ước tính độ đông.";
+  document.getElementById("sheet-note").textContent = place.notes ?? "";
+  document.getElementById("sheet-directions").href = mapsDirections(placeQuery(place));
+  document.getElementById("sheet-photos").href = mapsSearch(placeQuery(place));
   placeSheet.showModal();
 }
 
-function setSheetText(id, value) {
-  document.getElementById(id).textContent = value;
-}
-
-function renderChoice(id, i, mode) {
-  const [name, , , , price, note] = places[id];
-  const inputId = "place-" + i + "-" + id;
+function renderChoice(slot, id) {
+  const place = places.get(id);
+  const inputId = "place-" + slot.id + "-" + id;
+  const name = escapeHtml(place.name);
+  const risk = crowdLabels[place.crowdRisk];
+  const status = place.status ?? "candidate";
   return `<div class="choice">
-    <input id="${inputId}" type="checkbox" data-slot="${i}" data-place="${id}" ${on(i,id) ? "checked" : ""} ${mode === "fixed" ? "disabled" : ""}>
+    <input id="${inputId}" type="checkbox" data-slot="${slot.id}" data-place="${id}" ${checked(slot, id) ? "checked" : ""} ${slot.kind === "fixed" ? "disabled" : ""}>
     <label for="${inputId}">
       <span class="name">${name}</span>
-      <span class="meta">${note.replace(/ · dễ đông$/, "")}</span>
-      ${crowdNotes[id] ? '<span class="risk">Dễ đông</span>' : ""}
+      <span class="badges">
+        <span class="source ${place.source}">${sourceIcons[place.source]}${escapeHtml(plan.sourceLegend[place.source].label)}</span>
+        <span class="status ${status}">${statusLabels[status]}</span>
+      </span>
+      <span class="meta">${priceLabel(place.priceEstimate)}${place.priceEstimate ? " / người" : ""}</span>
+      ${risk ? '<span class="risk">' + risk + '</span>' : ""}
     </label>
     <div class="choice-end">
-      <span class="price">${price ? priceLabel(price) : "—"}</span>
       <button type="button" class="maps" data-details="${id}" aria-label="Chi tiết ${name}">Chi tiết</button>
+      <a class="maps" target="_blank" rel="noopener" href="${mapsSearch(placeQuery(place))}" aria-label="Google Maps: ${name}">Maps ↗</a>
     </div>
   </div>`;
 }
 
 function render() {
-  document.getElementById("tabs").innerHTML = days.map((d, i) =>
+  document.getElementById("tabs").innerHTML = days.map((item, i) =>
     `<button type="button" data-day="${i}" aria-pressed="${day === i}" class="${day === i ? "active" : ""}">
-      <span>${d.label.split(" ")[0]}/11</span>${["Thứ Bảy","Chủ nhật","Thứ Hai"][i]}
+      <span>${dayLabel(item.date)}</span>${escapeHtml(item.label)}
     </button>`
   ).join("");
   document.querySelectorAll("[data-day]").forEach(button => {
@@ -284,13 +969,14 @@ function render() {
       document.querySelector(`[data-day="${day}"]`).focus({preventScroll:true});
     };
   });
-
-  const slots = days[day].slots;
-  document.getElementById("timeline").innerHTML = slots.map(([time, title, ids, mode, note], i) =>
-    `<article class="slot">
-      <div class="time">${time}</div><h2>${title}</h2>
-      ${ids.map(id => renderChoice(id, i, mode)).join("")}
-      ${note ? `<div class="note ${mode === "note" ? "alert" : ""}">${note}</div>` : ""}
+  const current = days[day];
+  document.getElementById("area").textContent = current.area;
+  document.getElementById("timeline").innerHTML = current.slots.map(slot =>
+    `<article class="slot" data-slot-card="${slot.id}">
+      <div class="time">${escapeHtml(slot.time)}</div><h2>${escapeHtml(slot.title)}</h2>
+      ${slotLabels[slot.kind] ? '<p class="slot-kind">' + slotLabels[slot.kind] + '</p>' : ""}
+      ${options(slot).map(id => renderChoice(slot, id)).join("")}
+      ${slot.note ? `<div class="note ${slot.kind === "required-unresolved" ? "alert" : ""}">${escapeHtml(slot.note)}</div>` : ""}
     </article>`
   ).join("");
   document.querySelectorAll("[data-details]").forEach(button => {
@@ -298,45 +984,54 @@ function render() {
   });
   document.querySelectorAll("[data-slot]").forEach(input => {
     input.onchange = () => {
-      const i = Number(input.dataset.slot);
-      const id = input.dataset.place;
-      const [, , ids, mode] = slots[i];
-      const previous = ids.filter(place => on(i, place));
-      selected[day + "-" + i] = mode === "single" ? (input.checked ? [id] : []) :
-        input.checked ? [...new Set([...previous, id])] : previous.filter(place => place !== id);
-      localStorage.setItem("dalat-v2", JSON.stringify(selected));
-      render();
-      document.getElementById(input.id).focus({preventScroll:true});
+      const slot = current.slots.find(item => item.id === input.dataset.slot);
+      selected[slot.id] = options(slot).filter(id => id === input.dataset.place ? input.checked : checked(slot, id));
+      try { localStorage.setItem(storageKey, JSON.stringify(selected)); } catch {}
+      renderMap(current.slots);
     };
   });
+  renderMap(current.slots);
+}
 
-  const ids = [...new Set(slots.flatMap(([, , ids], i) => ids.filter(id => on(i, id))))];
+function renderMap(slots) {
+  const ids = [...new Set(slots.flatMap(slot => options(slot).filter(id => checked(slot, id))))];
+  const picks = ids.map(id => places.get(id));
+  const mappable = picks.filter(place => place.coordinates);
   layer.clearLayers();
-  const coordinates = ids.map(id => [places[id][2], places[id][3]]);
-  ids.forEach((id, i) => {
-    const name = places[id][0];
-    const marker = L.marker(coordinates[i], {
-      title: name,
-      alt: "Chi tiết " + name,
+  mappable.forEach((place, i) => {
+    const marker = L.marker(place.coordinates, {
+      title: place.name,
       icon: L.divIcon({className:"", html:`<div class="pin">${i + 1}</div>`, iconSize:[36,36], iconAnchor:[18,18]})
-    }).on("click", () => openPlace(id)).addTo(layer);
-    marker.getElement().setAttribute("aria-label", "Chi tiết " + name);
+    }).on("click", () => openPlace(place.id)).addTo(layer);
+    const pin = marker.getElement();
+    pin.setAttribute("aria-label", "Chi tiết " + place.name);
+    pin.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openPlace(place.id);
+    });
   });
-  if (coordinates.length > 1) map.fitBounds(coordinates, {padding:[32,32], maxZoom:16});
-  else map.setView(coordinates[0] || [11.94,108.45], 12);
-  document.getElementById("count").textContent = ids.length + " điểm";
+  if (mappable.length > 1) map.fitBounds(mappable.map(place => place.coordinates), {padding:[32,32], maxZoom:16});
+  else map.setView(mappable[0]?.coordinates ?? mapCenter, mappable.length ? 15 : 12);
+  document.getElementById("count").textContent = picks.length + " đã chọn";
+  const missing = picks.length - mappable.length;
+  document.getElementById("maphint").textContent = missing ?
+    missing + " điểm chưa có tọa độ. Mở Maps từ lịch trình." :
+    mappable.length ? "Chạm pin để xem chi tiết và chỉ đường." : "Chọn địa điểm trong lịch trình để xem pin.";
 
-  const queries = ids.map(id => places[id][1]);
+  const queries = picks.map(placeQuery);
   let url = mapsSearch("Đà Lạt");
   if (queries.length === 1) url = mapsDirections(queries[0]);
-  if (queries.length > 1) {
+  if (queries.length > 1 && queries.length <= 5) {
     const params = new URLSearchParams({
-      api: "1", origin: queries[0], destination: queries.at(-1), travelmode: "driving"
+      api:"1", origin:queries[0], destination:queries.at(-1), travelmode:"driving"
     });
     if (queries.length > 2) params.set("waypoints", queries.slice(1,-1).join("|"));
     url = "https://www.google.com/maps/dir/?" + params;
   }
-  document.getElementById("go").href = url;
+  const go = document.getElementById("go");
+  go.href = url;
+  go.textContent = queries.length > 1 && queries.length <= 5 ? "Lộ trình cả ngày" : "Google Maps ↗";
 }
 
 placeSheet.addEventListener("click", event => {
@@ -344,7 +1039,17 @@ placeSheet.addEventListener("click", event => {
   const rect = placeSheet.getBoundingClientRect();
   if (event.clientY < rect.top || event.clientX < rect.left || event.clientX > rect.right || event.clientY > rect.bottom) placeSheet.close();
 });
-document.getElementById("share").onclick=async()=>{let url=location.origin+location.pathname+"?plan="+encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(selected)))));try{await navigator.clipboard.writeText(url);alert("Đã sao chép link")}catch{prompt("Link:",url)}};render();
+document.getElementById("share").onclick = async () => {
+  const url = new URL(location.pathname, location.origin);
+  url.searchParams.set("plan", btoa(JSON.stringify({version:plan.version, selected})));
+  try {
+    await navigator.clipboard.writeText(url.href);
+    alert("Đã sao chép link");
+  } catch {
+    prompt("Link chia sẻ", url.href);
+  }
+};
+render();
   </script>
 </body>
 </html>
