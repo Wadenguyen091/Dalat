@@ -24,7 +24,7 @@
   --body: 400 14px/20px; --metadata: 400 12px/16px; --caption: 500 11px/16px;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
   --thumbnail-width: 104px; --thumbnail-height: 76px;
-  --source-icon-size: 14px; --handle-width: 36px;
+  --source-icon-size: 14px;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -47,8 +47,7 @@ a { color: inherit; }
 .toolbar { display: flex; flex: none; gap: var(--s1); }
 .toolbar .icon-button { background: var(--surface); border: 1px solid var(--border); }
 .toolbar .icon-button:hover { background: var(--surface-secondary); }
-.app[data-view="timeline"] [data-view-target="timeline"],
-.app[data-view="map"] [data-view-target="map"] { display: none; }
+.app[data-view="timeline"] [data-view-target="timeline"] { display: none; }
 .navigation { padding-bottom: var(--s8); }
 .tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border: 1px solid var(--border); border-radius: var(--r16); background: var(--control-track); padding: 1px; height: var(--s12); }
 .tabs button { min-height: 0; min-width: 0; border: 0; border-radius: var(--r12); background: transparent; font: var(--body) var(--font); color: var(--text-primary); white-space: nowrap; }
@@ -92,37 +91,22 @@ button:disabled { cursor: default; opacity: .55; }
 .icon-button:active, .action:active { opacity: .75; }
 .actions { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s3); }
 .actions .action { flex: 1; }
-.app[data-view="map"] { max-width: none; height: 100vh; height: 100dvh; display: grid; grid-template-rows: auto auto minmax(0,1fr); padding-bottom: 0; }
-.app[data-view="map"] .topbar { padding-top: var(--s2); padding-bottom: var(--s2); }
-.app[data-view="map"] .topbar h1 { font-size: var(--s5); line-height: 28px; }
-.app[data-view="map"] .sub { display: none; }
-.app[data-view="map"] .layout { position: relative; margin-inline: calc(-1 * var(--s4)); min-height: 0; }
-.mapcard { position: absolute; inset: 0; display: grid; grid-template-rows: minmax(0,1fr) auto; }
-.map-frame { min-height: 0; background: var(--surface-secondary); z-index: 0; }
+.plan-actions { margin-top: var(--s8); }
+.mapcard { display: grid; gap: var(--s4); }
+.map-frame { height: clamp(260px, 44dvh, 480px); background: var(--surface-secondary); border: 1px solid var(--border); border-radius: var(--r16); z-index: 0; }
 .map-frame .leaflet-control-zoom a { width: var(--tap); height: var(--tap); line-height: var(--tap); color: var(--text-primary); }
 .map-pin { display: grid; place-items: center; width: var(--tap); height: var(--tap); border-radius: 50%; background: transparent; }
 .map-pin > span { display: grid; place-items: center; width: var(--s8); height: var(--s8); color: white; background: var(--selected); border: 1px solid white; border-radius: 50%; box-shadow: 0 1px 4px rgb(0 0 0 / 18%); font: var(--body) var(--font); }
-.map-sheet { max-height: min(40dvh, 216px); overflow: hidden; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--sheet-radius) var(--sheet-radius) 0 0; padding: 0 var(--s4) max(var(--s2), env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
-.map-sheet[data-sheet-state="half"] { height: min(48dvh, 360px); max-height: none; }
-.map-sheet[data-sheet-state="expanded"] { height: min(64dvh, 520px); max-height: none; }
-.sheet-handle { width: 100%; min-height: var(--tap); display: grid; place-items: center; border: 0; background: transparent; color: var(--text-secondary); touch-action: none; }
-.sheet-handle::before { content: ""; width: var(--handle-width); height: var(--s1); background: var(--text-tertiary); border-radius: var(--r8); }
-.map-sheet-content { min-height: 0; overflow: auto; overscroll-behavior: contain; padding-bottom: var(--s2); }
 .maphead { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin-bottom: var(--s2); }
 .maphead span { color: var(--text-secondary); font: var(--body) var(--font); }
-.map-list { display: grid; grid-auto-columns: 120px; grid-auto-flow: column; gap: var(--s2); overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: var(--s1); }
-.map-place { position: relative; min-width: 0; scroll-snap-align: start; padding: var(--s2); }
-.map-place .place-button { display: block; width: 100%; }
-.map-place .name { margin-top: var(--s1); font: var(--body) var(--font); }
-.map-place .place-media { aspect-ratio: 4/3; }
-.map-place .source { display: flex; }
-.map-place > .icon-button { position: absolute; top: var(--s2); right: var(--s2); background: var(--surface); }
-.map-sheet[data-sheet-state="expanded"] .map-place > .icon-button { position: static; background: var(--surface-secondary); }
+.map-list { display: grid; gap: var(--s2); }
+.map-place { min-width: 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--s2); align-items: center; padding: var(--s2); }
+.map-place .place-button { grid-template-columns: 64px minmax(0,1fr); }
+.map-place .place-media { aspect-ratio: 1; }
+.map-place .action { flex-direction: column; gap: var(--s1); min-width: 72px; padding: var(--s2); font: var(--caption) var(--font); }
+.map-place .action .icon { width: var(--s4); height: var(--s4); }
 .place-button:hover .name { text-decoration: underline; text-underline-offset: var(--s1); }
 .place-button:active { opacity: .75; }
-.map-sheet[data-sheet-state="expanded"] .map-list { grid-auto-flow: row; grid-auto-columns: auto; overflow: visible; }
-.map-sheet[data-sheet-state="expanded"] .map-place { display: grid; grid-template-columns: minmax(0,1fr) var(--tap); gap: var(--s2); align-items: center; }
-.map-sheet[data-sheet-state="expanded"] .map-place .place-button { display: grid; grid-template-columns: 64px minmax(0,1fr); }
 .place-sheet { position: fixed; inset: auto 0 0; width: min(100%, 560px); max-width: none; max-height: 90vh; max-height: 90dvh; overflow: auto; margin: 0 auto; padding: var(--s4) var(--s4) max(var(--s4), env(safe-area-inset-bottom)); border: 0; border-radius: var(--sheet-radius) var(--sheet-radius) 0 0; color: var(--text-primary); background: var(--surface); overscroll-behavior: contain; }
 .place-sheet::backdrop { background: var(--overlay); }
 .sheet-media { margin-bottom: var(--s3); }
@@ -134,13 +118,7 @@ button:disabled { cursor: default; opacity: .55; }
 .sheet-credit { display: block; padding-top: var(--s1); }
 body:has(.place-sheet[open]) { overflow: hidden; }
 @media (min-width: 900px) {
-  .app, .app[data-view="map"] { display: block; max-width: 1120px; height: auto; padding-inline: var(--s6); }
-  .app[data-view="map"] .sub { display: block; }
-  .app[data-view="map"] .topbar { padding: var(--s6) 0 var(--s5); }
-  .app[data-view="map"] .topbar h1 { font: var(--title) var(--font); }
-  .app .layout, .app[data-view="map"] .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, .85fr); align-items: start; column-gap: var(--s8); margin: 0; }
-  .app[data-view="timeline"] .mapcard, .app[data-view="map"] .day-panel { display: block; }
-  .app[data-view] .mapcard { display: grid; position: sticky; top: var(--s4); inset-inline: auto; bottom: auto; height: min(720px, calc(100dvh - var(--s8))); border: 1px solid var(--border); border-radius: var(--r20); overflow: hidden; }
+  .app { max-width: 760px; padding-inline: var(--s6); }
   .place-sheet { inset: 0; margin: auto; border-radius: var(--sheet-radius); }
 }
   </style>
@@ -196,9 +174,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   </svg>
   <main class="app" data-view="timeline">
     <header class="topbar">
-      <div><h1>Da Lat Escape</h1><p class="sub">21–23 tháng 11, 2026</p></div>
+      <div><h1 id="page-title">Da Lat Escape</h1><p class="sub">21–23 tháng 11, 2026</p></div>
       <div class="toolbar">
-        <button type="button" class="icon-button" data-view-target="map" aria-label="Bản đồ cả ngày" title="Bản đồ cả ngày"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-map"></use></svg></button>
         <button type="button" class="icon-button" data-view-target="timeline" aria-label="Về lịch trình" title="Về lịch trình"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-list"></use></svg></button>
         <button id="share" class="icon-button" type="button" aria-label="Chia sẻ lịch trình" title="Chia sẻ lịch trình"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-share-2"></use></svg></button>
       </div>
@@ -209,18 +186,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     <div class="layout">
       <section class="day-panel" aria-label="Lịch trình trong ngày">
         <div id="timeline" class="timeline"></div>
+        <div class="actions plan-actions">
+          <button type="button" id="show-map" class="action" data-view-target="map"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-map"></use></svg>Xem bản đồ</button>
+        </div>
       </section>
       <section class="mapcard" aria-labelledby="map-title">
         <div id="map" class="map-frame" aria-label="Vị trí các địa điểm đã chọn"></div>
-        <section class="map-sheet" id="map-sheet" data-sheet-state="collapsed" aria-labelledby="map-title">
-          <button id="sheet-handle" class="sheet-handle" type="button" aria-expanded="false" aria-controls="map-sheet-content" aria-label="Mở rộng danh sách địa điểm"></button>
-          <div id="map-sheet-content" class="map-sheet-content">
-            <div class="maphead"><h2 id="map-title"></h2><span id="count" aria-live="polite"></span></div>
-            <div id="map-list" class="map-list"></div>
-            <p id="maphint" class="map-note" aria-live="polite"></p>
-            <div id="route-actions"></div>
-          </div>
-        </section>
+        <div>
+          <div class="maphead"><h2 id="map-title">Đã chọn</h2><span id="count" aria-live="polite"></span></div>
+          <div id="map-list" class="map-list"></div>
+          <p id="maphint" class="map-note" aria-live="polite"></p>
+          <div id="route-actions"></div>
+        </div>
       </section>
     </div>
   </main>
@@ -1308,7 +1285,6 @@ if (shared) {
 const checked = (slot, id) => (selected[slot.id] ?? slot.selected).includes(id);
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character =>
   ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"})[character]);
-const desktopLayout = matchMedia("(min-width: 900px)");
 const number = new Intl.NumberFormat("vi-VN");
 const priceLabel = price => {
   if (!price) return "Chưa có giá";
@@ -1379,67 +1355,38 @@ const app = /** @type {HTMLElement} */ (document.querySelector(".app"));
 /** @type {{map: L.Map, pins: L.LayerGroup} | undefined} */
 let overview;
 const mapElement = /** @type {HTMLDivElement} */ (document.getElementById("map"));
-const mapSheet = document.getElementById("map-sheet");
-const sheetHandle = document.getElementById("sheet-handle");
 const mapCenter = /** @type {L.LatLngTuple} */ ([11.94, 108.45]);
+const showMap = /** @type {HTMLButtonElement} */ (document.getElementById("show-map"));
+const returnToPlan = /** @type {HTMLButtonElement} */ (document.querySelector("[data-view-target='timeline']"));
 let planScroll = 0;
 
-function resizeMap() {
-  if (overview) overview.map.invalidateSize({pan:false});
-}
-const sheetStates = ["collapsed", "half", "expanded"];
-let sheetStep = 0;
-function setMapSheetStep(step) {
-  sheetStep = Math.max(0, Math.min(sheetStates.length - 1, step));
-  mapSheet.dataset.sheetState = sheetStates[sheetStep];
-  sheetHandle.setAttribute("aria-expanded", String(sheetStep > 0));
-  sheetHandle.setAttribute("aria-label", ["Mở rộng danh sách địa điểm", "Mở hết danh sách địa điểm", "Thu gọn danh sách địa điểm"][sheetStep]);
-  requestAnimationFrame(resizeMap);
-}
-let dragStart;
-let dragged = false;
-sheetHandle.addEventListener("pointerdown", event => {
-  dragStart = event.clientY;
-  dragged = false;
-  sheetHandle.setPointerCapture(event.pointerId);
-});
-sheetHandle.addEventListener("pointerup", event => {
-  if (dragStart !== undefined && Math.abs(event.clientY - dragStart) >= 24) {
-    dragged = true;
-    setMapSheetStep(sheetStep + (event.clientY < dragStart ? 1 : -1));
-  }
-  dragStart = undefined;
-});
-sheetHandle.addEventListener("pointercancel", () => { dragStart = undefined; dragged = false; });
-sheetHandle.onclick = () => {
-  if (!dragged) setMapSheetStep((sheetStep + 1) % sheetStates.length);
-  dragged = false;
-};
-
-/** @type {HTMLElement | null} */
-let mapTrigger = null;
-function switchView(view, trigger = null) {
-  if (app.dataset.view === view && view !== "map") return;
-  if (view === "map") {
-    if (app.dataset.view !== "map") planScroll = window.scrollY;
-    mapTrigger = trigger;
-  }
+function switchView(view) {
+  if (app.dataset.view === view) return;
+  if (view === "map") planScroll = window.scrollY;
   app.dataset.view = view;
+  document.getElementById("page-title").textContent = view === "map" ? "Bản đồ" : "Da Lat Escape";
   if (view === "map") {
-    if (!desktopLayout.matches) window.scrollTo(0, 0);
+    window.scrollTo(0, 0);
     renderMap(days[day].slots);
-    (/** @type {HTMLButtonElement} */ (document.querySelector("button[data-view-target='timeline']"))).focus({preventScroll:true});
+    returnToPlan.focus({preventScroll:true});
   } else {
-    renderMap(days[day].slots);
     window.scrollTo(0, planScroll);
-    if (mapTrigger?.isConnected) mapTrigger.focus({preventScroll:true});
-    else (/** @type {HTMLButtonElement} */ (document.querySelector("button[data-view-target='map']"))).focus({preventScroll:true});
+    showMap.focus({preventScroll:true});
   }
 }
 
-document.querySelectorAll("button[data-view-target]").forEach(button => {
-  button.addEventListener("click", () => switchView(button.getAttribute("data-view-target"), button));
+showMap.addEventListener("click", () => {
+  history.pushState({fromPlan:true}, "", "#ban-do");
+  switchView("map");
 });
+returnToPlan.addEventListener("click", () => {
+  if (history.state?.fromPlan) history.back();
+  else {
+    history.replaceState(null, "", location.pathname + location.search);
+    switchView("timeline");
+  }
+});
+window.addEventListener("popstate", () => switchView(location.hash === "#ban-do" ? "map" : "timeline"));
 
 function sourceLabel(place) {
   return `<span class="source ${place.source}">${icon(sourceIcons[place.source])}${escapeHtml(plan.sourceLegend[place.source].label)}</span>`;
@@ -1503,7 +1450,7 @@ function renderChoice(slot, id) {
 function render() {
   document.getElementById("tabs").innerHTML = days.map((item, i) =>
     `<button type="button" data-day="${i}" aria-pressed="${day === i}" aria-label="${escapeHtml(item.label)}, ${item.date.slice(8)}/${item.date.slice(5, 7)}" class="${day === i ? "active" : ""}">
-      ${escapeHtml(item.label)}
+      ${item.date.slice(8)}/${item.date.slice(5, 7)}
     </button>`
   ).join("");
   (/** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll("[data-day]"))).forEach(button => {
@@ -1563,13 +1510,12 @@ function renderRoute(stops) {
 
 /** @param {Slot[]} slots */
 function renderMap(slots) {
-  if (app.dataset.view !== "map" && !desktopLayout.matches) return;
+  if (app.dataset.view !== "map") return;
   const ids = slots.flatMap(slot => options(slot).filter(id => checked(slot, id)));
   const stops = ids.filter((id, i) => id !== ids[i - 1]).map(id => places.get(id));
   const picks = [...new Set(stops)];
   const known = picks.filter(place => place.position);
   const missing = picks.length - known.length;
-  document.getElementById("map-title").textContent = days[day].label;
   document.getElementById("count").textContent = picks.length + " địa điểm";
   document.getElementById("maphint").textContent = !picks.length ? "Chưa chọn địa điểm." :
     missing ? missing + " điểm chưa có pin." : "";
@@ -1581,8 +1527,8 @@ function renderMap(slots) {
         ${placeMedia(place.photos?.[0], true)}
         <span><span class="name">${i + 1}. ${escapeHtml(place.name)}</span>${sourceLabel(place)}</span>
       </button>
-      <a class="icon-button" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}"
-        aria-label="${place.google ? "Chỉ đường" : "Tra địa chỉ"}: ${escapeHtml(place.name)}">${icon(place.google ? "navigation" : "map-pin")}</a>
+      <a class="action alt" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}"
+        aria-label="${place.google ? "Chỉ đường" : "Tra địa chỉ"}: ${escapeHtml(place.name)}">${icon(place.google ? "navigation" : "map-pin")}${place.google ? "Chỉ đường" : "Tra địa chỉ"}</a>
     </div>`
   ).join("");
   list.querySelectorAll("[data-map-details]").forEach(button =>
@@ -1637,8 +1583,8 @@ document.getElementById("share").onclick = async () => {
     prompt("Link chia sẻ", url.href);
   }
 };
-desktopLayout.addEventListener("change", () => renderMap(days[day].slots));
 render();
+if (location.hash === "#ban-do") switchView("map");
   </script>
 </body>
 </html>
