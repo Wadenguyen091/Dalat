@@ -11,7 +11,6 @@ Mỗi ảnh được đối chiếu với trang địa điểm và lưu cục b�
 | `banhcan-31` | Bánh căn 31 Nguyễn Trãi | 1 | [Lang Thang Đà Lạt](https://langthangdalat.com/dia-diem/banh-can-31-nguyen-trai/) |
 | `xiumai-79` | Bánh mì xíu mại 79 | 1 | [Lang Thang Đà Lạt](https://langthangdalat.com/dia-diem/banh-mi-xiu-mai-ri-79-doi-dien-cay-xang-tinh-doi/) |
 | `bep-khoi` | Bếp Khói – Sườn Cay Khổng Lồ | 1 | [VnGuide](https://vnguide.vn/restaurant/giant-spicy-ribs) |
-| `ku-boc` | Cơm gà sốt trứng Ku Bốc | 1 | [mio.travel](https://mio.travel/p/c-m-g-c-b-c) |
 | `tay-bac` | Tây Bắc Quán | 1 | [VnGuide](https://vnguide.vn/restaurant/ca-nuong-com-lam-ga-nuong-tay-bac-da-lat) |
 | `hoi-no` | Tiệm Cơm Hồi Nớ | 2 | [Visit Lâm Đồng](https://visitlamdong.vn/vi/hoino) |
 | `thiet-168` | Thiết 168 | 2 | [VnGuide](https://vnguide.vn/restaurant/thiet-168) |
