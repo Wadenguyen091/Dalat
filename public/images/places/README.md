@@ -40,6 +40,7 @@
 | `doi-co-hong-tuyen-lam` | Đồi Cỏ Hồng hồ Tuyền Lâm | 1 | [DaLat.biz](https://www.dalat.biz/2022/06/doi-co-hong.html) |
 | `ben-thuyen-tuyen-lam` | Bến Thuyền Hồ Tuyền Lâm | 1 | [Hoa Dalat Travel](https://hoadalattravel.vn/tin-hoa-dalat-travel/hoa-dalat-travel-khao-sat-thuc-te-ho-tuyen-lam-ngay-16-10-2026/) |
 | `dap-tuyen-lam` | Đập tràn Hồ Tuyền Lâm | 1 | [Thao Nho qua MIA.vn](https://mia.vn/cam-nang-du-lich/dap-tran-ho-tuyen-lam-ve-dep-thanh-mat-giua-long-da-lat-10648) |
+| `thien-vien-truc-lam` | Thiền viện Trúc Lâm | 1 | [Visit Lâm Đồng](https://visitlamdong.vn/vi/thienvientruclam) |
 | `duong-ham-dat-set` | Đường Hầm Điêu Khắc | 1 | [Visit Lâm Đồng](https://visitlamdong.vn/vi/duonghamdieukhacdl) |
 | `sam-cafe` | SAM Cafe – Hồ Tuyền Lâm | 1 | [Tripmap](https://tripmap.vn/cafe-sam_cafe_ho_tuyen_lam-90bc8d89-phuong_xuan_huong_da_lat.html) |
 | `ngoi-nha-ben-ho` | Ngôi Nhà Bên Hồ | 1 | [Visit Lâm Đồng](https://visitlamdong.vn/vi/ngoinhabenho) |
