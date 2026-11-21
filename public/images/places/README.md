@@ -37,6 +37,8 @@
 | `loi-cua-gio` | Lời Của Gió | 1 | [Nắng Trip](https://nangtrip.com/activities/loi-cua-gio) |
 | `xiu-mai-be-linh` | Bánh mì xíu mại Bé Linh | 1 | [Báo Thanh Niên qua MIA.vn](https://mia.vn/cam-nang-du-lich/top-quan-banh-mi-xiu-mai-hoang-dieu-19607) |
 | `banh-can-nha-chung` | Bánh căn Nhà Chung | 1 | [Corner](https://www.corner.inc/place/pBBauKhxV23r) |
+| `doi-co-hong-tuyen-lam` | Đồi Cỏ Hồng hồ Tuyền Lâm | 1 | [DaLat.biz](https://www.dalat.biz/2022/06/doi-co-hong.html) |
+| `ben-thuyen-tuyen-lam` | Bến Thuyền Hồ Tuyền Lâm | 1 | [Hoa Dalat Travel](https://hoadalattravel.vn/tin-hoa-dalat-travel/hoa-dalat-travel-khao-sat-thuc-te-ho-tuyen-lam-ngay-16-10-2026/) |
 | `dap-tuyen-lam` | Đập tràn Hồ Tuyền Lâm | 1 | [Thao Nho qua MIA.vn](https://mia.vn/cam-nang-du-lich/dap-tran-ho-tuyen-lam-ve-dep-thanh-mat-giua-long-da-lat-10648) |
 | `duong-ham-dat-set` | Đường Hầm Điêu Khắc | 1 | [Visit Lâm Đồng](https://visitlamdong.vn/vi/duonghamdieukhacdl) |
 | `sam-cafe` | SAM Cafe – Hồ Tuyền Lâm | 1 | [Tripmap](https://tripmap.vn/cafe-sam_cafe_ho_tuyen_lam-90bc8d89-phuong_xuan_huong_da_lat.html) |
