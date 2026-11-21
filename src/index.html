@@ -451,6 +451,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
       "category": "lunch",
       "mapQuery": "42 Phan Chu Trinh Đà Lạt",
       "priceEstimate": null,
+      "hours": "10:30–14:00 · 16:30–22:00",
+      "hoursSource": "https://dalatnow.vn/cafe-san-may-da-lat/",
       "google": {
         "id": "ChIJd0qigOoTcTERKn7UTATRPO0",
         "address": "42 Phan Chu Trinh, Lâm Viên - Đà Lạt, Lâm Đồng 66000, Vietnam"
@@ -1016,8 +1018,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
       "slots": [
         {
           "id": "21-01",
-          "time": "08:00–11:30",
-          "title": "Tập kết & nghỉ",
+          "time": "08:00–14:30",
+          "title": "Tập kết & nghỉ tại Ga49",
           "kind": "fixed",
           "options": [
             "ga49"
@@ -1027,28 +1029,16 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
           ]
         },
         {
-          "id": "21-02",
-          "time": "11:30–12:30",
-          "title": "Ăn trưa gần Ga49",
+          "id": "21-pickup",
+          "time": "14:30–15:00",
+          "title": "Lấy cơm mang đi (tùy chọn)",
           "kind": "choose",
+          "selectionFrom": "21-02",
           "options": [
-            "com-tam-thien-nhan",
-            "com-tam-my-linh"
+            "com-tam-thien-nhan"
           ],
           "selected": [],
-          "note": "Chọn một quán. Nếu đông, lấy cơm mang về. Quay lại Ga49 chậm nhất 12:30."
-        },
-        {
-          "id": "21-03",
-          "time": "12:45–14:30",
-          "title": "Nghỉ tại Ga49",
-          "kind": "fixed",
-          "options": [
-            "ga49"
-          ],
-          "selected": [
-            "ga49"
-          ]
+          "note": "Thiện Nhân đóng lúc 15:30. Đặt trước và chỉ ghé lấy nếu kịp check-in."
         },
         {
           "id": "21-04",
@@ -1064,7 +1054,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         },
         {
           "id": "21-05",
-          "time": "16:00–17:45",
+          "time": "16:00–16:30",
           "title": "Cà phê view đồi",
           "kind": "choose",
           "options": [
@@ -1076,6 +1066,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
           ],
           "selected": [],
           "note": "Choose only one; sunset crowd risk, skip if tired"
+        },
+        {
+          "id": "21-02",
+          "time": "16:30–17:45",
+          "title": "Ăn xế sau check-in",
+          "kind": "choose",
+          "options": [
+            "bep-khoi",
+            "com-tam-my-linh"
+          ],
+          "selected": [],
+          "note": "Chọn một quán. Bếp Khói mở lại lúc 16:30."
         },
         {
           "id": "21-06",
@@ -1319,7 +1321,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * @typedef {{id:string, name:string, source:"human"|"ai", mapQuery:string, priceEstimate:{min:number,max:number}|null,
  * status?:string, crowdRisk?:string, notes?:string, google?:{id:string,address:string,addressOnly?:boolean,referenceLabel?:string},
  * position?:{coordinates:L.LatLngTuple,source:string}, hours?:string, photos?:PlacePhoto[]}} Place
- * @typedef {{id:string, time:string, title:string, kind:string, options:string[], selected:string[], note?:string}} Slot
+ * @typedef {{id:string, time:string, title:string, kind:string, options:string[], selected:string[], note?:string, selectionFrom?:string}} Slot
  * @typedef {{date:string,label:string,area:string,slots:Slot[]}} TripDay
  */
 /** @type {{version:string, days:TripDay[], places:Place[], uiRules:{maxOptionsPerSlot:number}, sourceLegend:Record<string,{label:string}>}} */
@@ -1335,9 +1337,11 @@ let selected = {};
 function readSelections(value) {
   const parsed = JSON.parse(value);
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
-  return Object.fromEntries(days.flatMap(({slots}) => slots
-    .filter(slot => slot.kind !== "fixed" && Array.isArray(parsed[slot.id]))
-    .map(slot => [slot.id, options(slot).filter(id => parsed[slot.id].includes(id))])));
+  return Object.fromEntries(days.flatMap(({slots}) => slots.flatMap(slot => {
+    const choices = parsed[slot.id] ?? (slot.selectionFrom ? parsed[slot.selectionFrom] : undefined);
+    if (slot.kind === "fixed" || !Array.isArray(choices)) return [];
+    return [[slot.id, options(slot).filter(id => choices.includes(id))]];
+  })));
 }
 
 try { selected = readSelections(localStorage.getItem(storageKey)); } catch {}
@@ -1359,7 +1363,7 @@ const priceLabel = price => {
 };
 const statusLabels = {booked:"Đã đặt", "approved-not-booked":"Đã duyệt · chưa đặt", candidate:"Đề xuất"};
 const slotNotes = {
-  "21-05": "Chọn một quán nếu đi. Dễ đông lúc hoàng hôn.",
+  "21-05": "Có thể bỏ qua nếu đi ăn xế.",
   "21-06": "Rừng Lá Kim lệch tuyến.",
   "22-03": "Chèo SUP khi đã đặt chỗ và thời tiết phù hợp.",
   "22-05": "Các quán đều cần đi vòng hoặc quay lại.",
