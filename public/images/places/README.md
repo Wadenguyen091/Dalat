@@ -45,6 +45,7 @@
 | `binh-minh-oi` | Tiệm cà phê Bình Minh Ơi | 1 | [Visit Lâm Đồng](https://visitlamdong.vn/vi/tiemcaphebinhminhoi) |
 | `dalat-view` | Đà Lạt View | 1 | [Đà Lạt View](https://dalatview.com/) |
 | `tao-ngo` | Lẩu gà lá é Tao Ngộ | 1 | [Tao Ngộ 10 Bis](https://laugataongo10bis3-4dalat.com/) |
-| `lau-bo-quan-go` | Lẩu Bò Quán Gỗ ABaToa | 1 | [MIA.vn](https://mia.vn/cam-nang-du-lich/moi-ban-vao-team-miavn-de-cung-di-an-quan-lau-bo-ba-toa-nha-go-nuc-tieng-da-lat-1420) |
+| `fungi-chingu` | Fungi Chingu Chợ Đêm | 1 | [VnGuide](https://vnguide.vn/restaurant/fungi-chingu) |
+| `lau-bo-quan-go` | Lẩu bò Ba Toa – Quán Gỗ | 1 | [MIA.vn](https://mia.vn/cam-nang-du-lich/moi-ban-vao-team-miavn-de-cung-di-an-quan-lau-bo-ba-toa-nha-go-nuc-tieng-da-lat-1420) |
 | `nhu-ngoc` | Nhà hàng cơm niêu Như Ngọc | 1 | [Cơm Niêu Như Ngọc](https://comnieunhungoc.com/vn) |
 | `dalat-pho` | Tiệm Ăn Đà Lạt Phố | 1 | [VnGuide](https://vnguide.vn/restaurant/tiem-an-da-lat-pho-restaurant) |
