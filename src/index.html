@@ -445,6 +445,67 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
       "hoursSource": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m+t%E1%BA%A5m+M%E1%BB%B9+Linh&query_place_id=ChIJTYCNcAATcTERSWw4a_sfWQ4"
     },
     {
+      "id": "nuong-hoang-hon",
+      "name": "Tiệm Nướng Hoàng Hôn",
+      "source": "ai",
+      "category": "dinner",
+      "mapQuery": "Tiệm Nướng Hoàng Hôn, 118 Hùng Vương, Đà Lạt",
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJp8dPnPITcTER4DQ0fS4zqy4",
+        "address": "Cổng trại giam Dã Chiến, 118 Hùng Vương, Xuân Trường – Đà Lạt"
+      },
+      "position": {
+        "coordinates": [11.9381695, 108.4835734],
+        "source": "Google Maps · Tiệm Nướng Hoàng Hôn"
+      },
+      "hours": "14:00–22:00",
+      "hoursSource": "https://langthangdalat.com/dia-diem/tiem-nuong-hoang-hon/",
+      "notes": "Gà nướng sốt tiêu xanh, gần chỗ nghe acoustic."
+    },
+    {
+      "id": "tram-dung-chill",
+      "name": "Tiệm Nướng Trạm Dừng Chill",
+      "source": "ai",
+      "category": "dinner",
+      "mapQuery": "Tiệm Nướng Trạm Dừng Chill, 111 Huỳnh Tấn Phát, Đà Lạt",
+      "priceEstimate": {
+        "min": 95000,
+        "max": 300000
+      },
+      "priceSource": "https://tramdungchill.vn/blog/an-nuong-da-lat-bao-nhieu-tien.html",
+      "google": {
+        "id": "ChIJpYYvmwETcTERS8JhxzT1I3Q",
+        "address": "111 Huỳnh Tấn Phát, Xuân Trường – Đà Lạt"
+      },
+      "position": {
+        "coordinates": [11.9542027, 108.4946325],
+        "source": "Google Maps · Tiệm Nướng Trạm Dừng Chill"
+      },
+      "hours": "15:00–23:00",
+      "hoursSource": "https://tramdungchill.vn/duong-di/",
+      "notes": "Nướng than hoa, nhìn ra đường tàu Trại Mát."
+    },
+    {
+      "id": "nuong-our-memory",
+      "name": "Tiệm Nướng Our Memory",
+      "source": "ai",
+      "category": "dinner",
+      "mapQuery": "Tiệm Nướng Our Memory, 12 Triệu Việt Vương, Đà Lạt",
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJ44oI6coTcTERdsoCnkhtT68",
+        "address": "12 Triệu Việt Vương, Xuân Hương – Đà Lạt"
+      },
+      "position": {
+        "coordinates": [11.9285088, 108.4302537],
+        "source": "Google Maps · Tiệm Nướng Our Memory"
+      },
+      "hours": "Thứ Bảy 16:00–22:00 (Google Maps)",
+      "hoursSource": "https://www.google.com/maps/search/?api=1&query=Ti%E1%BB%87m+N%C6%B0%E1%BB%9Bng+Our+Memory&query_place_id=ChIJ44oI6coTcTERdsoCnkhtT68",
+      "notes": "Gần Airbnb. Chặng sang điểm acoustic dài hơn."
+    },
+    {
       "id": "bep-khoi",
       "name": "Bếp Khói – Sườn Cay Khổng Lồ",
       "source": "human",
@@ -1014,7 +1075,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     {
       "date": "2026-11-21",
       "label": "Thứ Bảy",
-      "area": "Ga49 → Airbnb → Bếp Khói → Dưới Tán Anh Đào",
+      "area": "Ga49 → Airbnb → Ăn nướng → Dưới Tán Anh Đào",
       "slots": [
         {
           "id": "21-01",
@@ -1051,27 +1112,27 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         {
           "id": "21-transfer-dinner",
           "time": "16:00–16:45",
-          "title": "Di chuyển đến Bếp Khói",
+          "title": "Di chuyển đến quán nướng",
           "kind": "fixed",
           "options": [],
           "selected": []
         },
         {
-          "id": "21-02",
+          "id": "21-grill",
           "time": "16:45–18:00",
-          "title": "Ăn tối sớm",
-          "kind": "fixed",
+          "title": "Ăn nướng",
+          "kind": "choose",
           "options": [
-            "bep-khoi"
+            "nuong-hoang-hon",
+            "tram-dung-chill",
+            "nuong-our-memory"
           ],
-          "selected": [
-            "bep-khoi"
-          ],
-          "note": "Quán mở lại lúc 16:30. Chừa thời gian gọi món và ăn cho nhóm 6 người."
+          "selected": [],
+          "note": "Chọn một quán. Hoàng Hôn gần điểm nghe nhạc nhất. Hỏi trước bàn 6 người."
         },
         {
           "id": "21-break",
-          "time": "18:00–18:45",
+          "time": "18:00–18:30",
           "title": "Nghỉ hoặc dạo gần quán",
           "kind": "fixed",
           "options": [],
@@ -1079,7 +1140,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         },
         {
           "id": "21-transfer-evening",
-          "time": "18:45–19:15",
+          "time": "18:30–19:15",
           "title": "Di chuyển đến Dưới Tán Anh Đào",
           "kind": "fixed",
           "options": [],
@@ -1103,7 +1164,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     {
       "date": "2026-11-22",
       "label": "Chủ nhật",
-      "area": "Hồ Tuyền Lâm / phía Nam",
+      "area": "Hồ Tuyền Lâm → Bếp Khói → rừng thông",
       "slots": [
         {
           "id": "22-01",
@@ -1140,7 +1201,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         },
         {
           "id": "22-04",
-          "time": "10:00–11:30",
+          "time": "10:00–11:00",
           "title": "Ngắm hồ / nghỉ",
           "kind": "choose",
           "options": [
@@ -1150,29 +1211,37 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
           "selected": []
         },
         {
+          "id": "22-transfer-lunch",
+          "time": "11:00–11:45",
+          "title": "Di chuyển từ hồ đến Bếp Khói",
+          "kind": "travel",
+          "options": [],
+          "selected": []
+        },
+        {
           "id": "22-05",
-          "time": "11:30–13:00",
+          "time": "11:45–13:00",
           "title": "Ăn trưa",
-          "kind": "choose",
+          "kind": "fixed",
           "options": [
-            "tay-bac",
-            "hoi-no",
             "bep-khoi"
           ],
-          "selected": [],
-          "note": "All listed restaurants require route detour or return; do not mark as confirmed best"
+          "selected": [
+            "bep-khoi"
+          ]
         },
         {
           "id": "22-06",
           "time": "13:00–15:00",
-          "title": "Rừng thông",
+          "title": "Di chuyển và ghé rừng thông",
           "kind": "optional",
           "options": [
             "thong",
             "miet",
             "rung-la-kim"
           ],
-          "selected": []
+          "selected": [],
+          "note": "Ghé một điểm nếu còn thời gian. Canh giờ về Airbnb lúc 15:00."
         },
         {
           "id": "22-07",
@@ -1367,7 +1436,6 @@ const priceLabel = price => {
 const statusLabels = {booked:"Đã đặt", "approved-not-booked":"Đã duyệt · chưa đặt", candidate:"Đề xuất"};
 const slotNotes = {
   "22-03": "Chèo SUP khi đã đặt chỗ và thời tiết phù hợp.",
-  "22-05": "Các quán đều cần đi vòng hoặc quay lại.",
   "22-08": "Nếu đã ăn ở Dưới Tán Anh Đào, ưu tiên quán khác.",
   "23-03": "Chốt chỗ gửi vali cho 6 người đến 20:00–20:30.",
   "23-05": "Chọn một quán sau khi chốt chỗ gửi vali và điểm đón xe.",
