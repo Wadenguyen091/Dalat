@@ -105,7 +105,8 @@ button:disabled { cursor: default; opacity: .55; }
 .map-place { min-width: 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--s2); align-items: center; padding: var(--s2); }
 .map-place .place-button { grid-template-columns: 64px minmax(0,1fr); }
 .map-place .place-media { aspect-ratio: 1; }
-.map-place .action { flex-direction: column; gap: var(--s1); min-width: 72px; padding: var(--s2); font: var(--caption) var(--font); }
+.map-place-actions { display: grid; gap: var(--s1); }
+.map-place .action { justify-content: flex-start; gap: var(--s1); padding: var(--s2); font: var(--caption) var(--font); white-space: nowrap; }
 .map-place .action .icon { width: var(--s4); height: var(--s4); }
 .place-button:hover .name { text-decoration: underline; text-underline-offset: var(--s1); }
 .place-button:active { opacity: .75; }
@@ -164,6 +165,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <circle cx="9" cy="9" r="2" />
   <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></symbol>
     <symbol id="lucide-navigation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11" /></symbol>
+    <symbol id="lucide-external-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
     <symbol id="lucide-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" />
   <polyline points="12 6 12 12 16 14" /></symbol>
     <symbol id="lucide-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
@@ -205,6 +209,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     </header>
     <div class="actions">
       <a id="sheet-directions" class="action" target="_blank" rel="noopener">Chỉ đường</a>
+      <a id="sheet-more" class="action alt" target="_blank" rel="noopener" aria-label="Xem thêm trên Google Maps"><svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-external-link"></use></svg>Xem thêm</a>
     </div>
     <div class="sheet-info">
       <p id="sheet-price"></p>
@@ -2168,8 +2173,9 @@ function directionLabel(place) {
   return place.google ? "Chỉ đường" : "Tra địa chỉ";
 }
 function mapsSearch(place) {
-  const params = new URLSearchParams({api:"1", query:placeQuery(place)});
-  if (place.google) params.set("query_place_id", place.google.id);
+  const reference = place.google?.referenceLabel;
+  const params = new URLSearchParams({api:"1", query:reference ? place.mapQuery : placeQuery(place)});
+  if (place.google && !reference) params.set("query_place_id", place.google.id);
   return "https://www.google.com/maps/search/?" + params;
 }
 /** @param {Place[]} stops */
@@ -2260,6 +2266,8 @@ function openPlace(id) {
   const directions = /** @type {HTMLAnchorElement} */ (document.getElementById("sheet-directions"));
   directions.href = placeLink(place);
   directions.innerHTML = icon(place.google ? "navigation" : "map-pin") + escapeHtml(directionLabel(place));
+  const more = /** @type {HTMLAnchorElement} */ (document.getElementById("sheet-more"));
+  more.href = mapsSearch(place);
   if (!placeSheet.open) placeSheet.showModal();
   placeSheet.scrollTop = 0;
 }
@@ -2371,8 +2379,12 @@ function renderMap(slots) {
         ${placeMedia(place.photos?.[0], true)}
         <span class="name">${i + 1}. ${escapeHtml(place.name)}</span>
       </button>
-      <a class="action alt" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}"
-        aria-label="${escapeHtml(directionLabel(place))}: ${escapeHtml(place.name)}">${icon(place.google ? "navigation" : "map-pin")}${escapeHtml(directionLabel(place))}</a>
+      <div class="map-place-actions">
+        <a class="action alt" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}"
+          aria-label="${escapeHtml(directionLabel(place))}: ${escapeHtml(place.name)}">${icon(place.google ? "navigation" : "map-pin")}${escapeHtml(directionLabel(place))}</a>
+        <a class="action alt" data-map-more="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(mapsSearch(place))}"
+          aria-label="Xem thêm trên Google Maps: ${escapeHtml(place.name)}">${icon("external-link")}Xem thêm</a>
+      </div>
     </div>`
   ).join("");
   list.querySelectorAll("[data-map-details]").forEach(button =>
