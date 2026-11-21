@@ -52,3 +52,6 @@
 | `lau-bo-quan-go` | Lẩu bò Ba Toa – Quán Gỗ | 1 | [MIA.vn](https://mia.vn/cam-nang-du-lich/moi-ban-vao-team-miavn-de-cung-di-an-quan-lau-bo-ba-toa-nha-go-nuc-tieng-da-lat-1420) |
 | `nhu-ngoc` | Nhà hàng cơm niêu Như Ngọc | 1 | [Cơm Niêu Như Ngọc](https://comnieunhungoc.com/vn) |
 | `dalat-pho` | Tiệm Ăn Đà Lạt Phố | 1 | [VnGuide](https://vnguide.vn/restaurant/tiem-an-da-lat-pho-restaurant) |
+| `tam-trinh` | Tám Trình Coffee Experiences | 1 | [Tám Trình Coffee Experiences](https://tamtrinhcoffee.com/tourist-attraction/) |
+| `sambodhi` | Sambodhi Coffee & Roastery | 1 | [Sambodhi Coffee](https://sambodhicoffee.com/) |
+| `vuon-rung` | Cà Phê Vườn Rừng · The Married Beans | 1 | [The Married Beans](https://www.themarriedbeans.com/en/pages/stores) |
