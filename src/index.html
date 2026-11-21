@@ -278,7 +278,20 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
       "category": "stay",
       "mapQuery": "64/6 Đào Duy Từ, phường Xuân Hương, Đà Lạt 60000, Việt Nam",
       "priceEstimate": null,
-      "status": "booked"
+      "status": "booked",
+      "google": {
+        "id": "ChIJzTuddjQTcTERZ7vEj54x7h0",
+        "address": "64 Đào Duy Từ, phường Xuân Hương, Đà Lạt 60000, Việt Nam",
+        "addressOnly": true,
+        "referenceLabel": "số 64"
+      },
+      "position": {
+        "coordinates": [
+          11.9329825,
+          108.4316773
+        ],
+        "source": "Google Maps, tòa nhà số 64; mốc tham khảo cho căn 64/6."
+      }
     },
     {
       "id": "banhcan-lanh",
@@ -1259,7 +1272,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /**
  * @typedef {{src:string, thumbnail:string, alt:string, source:string, credit:string}} PlacePhoto
  * @typedef {{id:string, name:string, source:"human"|"ai", mapQuery:string, priceEstimate:{min:number,max:number}|null,
- * status?:string, crowdRisk?:string, notes?:string, google?:{id:string,address:string,addressOnly?:boolean},
+ * status?:string, crowdRisk?:string, notes?:string, google?:{id:string,address:string,addressOnly?:boolean,referenceLabel?:string},
  * position?:{coordinates:L.LatLngTuple,source:string}, hours?:string, photos?:PlacePhoto[]}} Place
  * @typedef {{id:string, time:string, title:string, kind:string, options:string[], selected:string[], note?:string}} Slot
  * @typedef {{date:string,label:string,area:string,slots:Slot[]}} TripDay
@@ -1324,10 +1337,17 @@ const crowdLabels = {
 };
 const icon = name => `<svg class="icon" aria-hidden="true" focusable="false"><use href="#lucide-${name}"></use></svg>`;
 const locationNotes = {
-  airbnb: "Google Maps chưa xác nhận được ghim đúng căn 64/6."
+  airbnb: "Chỉ đường tới số 64. Địa chỉ lưu trú là căn 64/6."
 };
-const placeQuery = place => place.google && !place.google.addressOnly ?
-  place.name + ", " + place.google.address : place.mapQuery;
+function placeQuery(place) {
+  const listing = place.google;
+  if (!listing) return place.mapQuery;
+  return listing.addressOnly ? listing.address : place.name + ", " + listing.address;
+}
+function directionLabel(place) {
+  if (place.google?.referenceLabel) return "Tới " + place.google.referenceLabel;
+  return place.google ? "Chỉ đường" : "Tra địa chỉ";
+}
 function mapsSearch(place) {
   const params = new URLSearchParams({api:"1", query:placeQuery(place)});
   if (place.google) params.set("query_place_id", place.google.id);
@@ -1411,7 +1431,7 @@ function openPlace(id) {
   gallery.innerHTML = photos.slice(1).map(photo => placeMedia(photo)).join("");
   document.getElementById("sheet-title").textContent = place.name;
   document.getElementById("sheet-meta").textContent = statusLabels[place.status] ?? "";
-  document.getElementById("sheet-address").innerHTML = icon("map-pin") + escapeHtml(place.google?.address ?? place.mapQuery);
+  document.getElementById("sheet-address").innerHTML = icon("map-pin") + escapeHtml(place.google?.referenceLabel ? place.mapQuery : place.google?.address ?? place.mapQuery);
   document.getElementById("sheet-hours").innerHTML = place.hours ? icon("clock") + escapeHtml(place.hours) : "";
   document.getElementById("sheet-price").textContent = place.priceEstimate ? "Khoảng " + priceLabel(place.priceEstimate) + " / người" : "";
   document.getElementById("sheet-crowd").textContent = crowdLabels[place.crowdRisk] ?
@@ -1420,7 +1440,7 @@ function openPlace(id) {
   document.getElementById("sheet-location").textContent = locationNotes[place.id] ?? "";
   const directions = /** @type {HTMLAnchorElement} */ (document.getElementById("sheet-directions"));
   directions.href = placeLink(place);
-  directions.innerHTML = place.google ? icon("navigation") + "Chỉ đường" : icon("map-pin") + "Tra địa chỉ";
+  directions.innerHTML = icon(place.google ? "navigation" : "map-pin") + escapeHtml(directionLabel(place));
   if (!placeSheet.open) placeSheet.showModal();
   placeSheet.scrollTop = 0;
 }
@@ -1502,11 +1522,14 @@ function renderRoute(stops) {
   }
   if (segment.length > 1) segments.push(segment);
   const complete = !missing.length && stops.length <= 5;
-  const note = missing.length ? `Cần xác nhận: ${missing.join(" và ")}.` : "";
-  actions.innerHTML = (note ? `<p class="route-note alert">${escapeHtml(note)}</p>` : "") +
+  const stopName = place => place.google.referenceLabel ? "Mốc " + place.google.referenceLabel : place.name;
+  const notes = missing.length ? [`Cần xác nhận: ${missing.join(" và ")}.`] : [];
+  const references = [...new Set(segments.flat().filter(place => place.google.referenceLabel))];
+  for (const place of references) notes.push(`Tuyến dùng mốc ${place.google.referenceLabel} cho ${place.name}.`);
+  actions.innerHTML = notes.map(note => `<p class="route-note alert">${escapeHtml(note)}</p>`).join("") +
     segments.map((items, i) =>
       `<div class="actions"><a class="action" target="_blank" rel="noopener" href="${escapeHtml(mapsDirections(items))}">${icon("navigation")}${complete ?
-        "Lộ trình cả ngày" : "Chặng " + (i + 1) + " · " + escapeHtml(items[0].name) + " → " + escapeHtml(items.at(-1).name)}</a></div>`
+        "Lộ trình cả ngày" : "Chặng " + (i + 1) + " · " + escapeHtml(stopName(items[0])) + " → " + escapeHtml(stopName(items.at(-1)))}</a></div>`
     ).join("");
 }
 
@@ -1530,7 +1553,7 @@ function renderMap(slots) {
         <span class="name">${i + 1}. ${escapeHtml(place.name)}</span>
       </button>
       <a class="action alt" data-map-directions="${place.id}" target="_blank" rel="noopener" href="${escapeHtml(placeLink(place))}"
-        aria-label="${place.google ? "Chỉ đường" : "Tra địa chỉ"}: ${escapeHtml(place.name)}">${icon(place.google ? "navigation" : "map-pin")}${place.google ? "Chỉ đường" : "Tra địa chỉ"}</a>
+        aria-label="${escapeHtml(directionLabel(place))}: ${escapeHtml(place.name)}">${icon(place.google ? "navigation" : "map-pin")}${escapeHtml(directionLabel(place))}</a>
     </div>`
   ).join("");
   list.querySelectorAll("[data-map-details]").forEach(button =>
@@ -1554,12 +1577,13 @@ function renderMap(slots) {
   pins.clearLayers();
   known.forEach(place => {
     const number = picks.indexOf(place) + 1;
+    const markerTitle = place.google?.referenceLabel ? place.name + " (mốc " + place.google.referenceLabel + ")" : place.name;
     const marker = L.marker(place.position.coordinates, {
-      title: place.name,
+      title: markerTitle,
       icon: L.divIcon({className:"map-pin", html:`<span>${number}</span>`, iconSize:[44,44], iconAnchor:[22,22]})
     }).on("click", () => openPlace(place.id)).addTo(pins);
     const pin = marker.getElement();
-    pin.setAttribute("aria-label", number + ". " + place.name);
+    pin.setAttribute("aria-label", number + ". " + markerTitle);
     pin.addEventListener("keydown", event => {
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
