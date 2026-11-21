@@ -399,6 +399,52 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
       ]
     },
     {
+      "id": "com-tam-thien-nhan",
+      "name": "Cơm tấm Thiện Nhân",
+      "source": "ai",
+      "category": "lunch",
+      "mapQuery": "Cơm tấm Thiện Nhân, 43 Hùng Vương, Đà Lạt",
+      "priceEstimate": {
+        "min": 50000,
+        "max": 55000
+      },
+      "priceSource": "https://shopeefood.vn/lam-dong/com-tam-thien-nhan-hung-vuong",
+      "google": {
+        "id": "ChIJM5sMff0ScTERpjbFpT3wBdQ",
+        "address": "43 Hùng Vương, Lâm Viên – Đà Lạt, Lâm Đồng, Việt Nam"
+      },
+      "position": {
+        "coordinates": [
+          11.9475449,
+          108.4654549
+        ],
+        "source": "Google Maps · Cơm tấm Thiện Nhân"
+      },
+      "hours": "Thứ Bảy 06:00–15:30",
+      "hoursSource": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m+t%E1%BA%A5m+Thi%E1%BB%87n+Nh%C3%A2n&query_place_id=ChIJM5sMff0ScTERpjbFpT3wBdQ"
+    },
+    {
+      "id": "com-tam-my-linh",
+      "name": "Cơm tấm Mỹ Linh",
+      "source": "ai",
+      "category": "lunch",
+      "mapQuery": "Cơm tấm Mỹ Linh (Mỹ Tho), 32-34 Hùng Vương, Đà Lạt",
+      "priceEstimate": null,
+      "google": {
+        "id": "ChIJTYCNcAATcTERSWw4a_sfWQ4",
+        "address": "32–34 Hùng Vương, Lâm Viên – Đà Lạt, Lâm Đồng, Việt Nam"
+      },
+      "position": {
+        "coordinates": [
+          11.9469266,
+          108.4652318
+        ],
+        "source": "Google Maps · Cơm tấm Mỹ Linh (Mỹ Tho)"
+      },
+      "hours": "Thứ Bảy 06:30–20:00",
+      "hoursSource": "https://www.google.com/maps/search/?api=1&query=C%C6%A1m+t%E1%BA%A5m+M%E1%BB%B9+Linh&query_place_id=ChIJTYCNcAATcTERSWw4a_sfWQ4"
+    },
+    {
       "id": "bep-khoi",
       "name": "Bếp Khói – Sườn Cay Khổng Lồ",
       "source": "human",
@@ -982,16 +1028,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         },
         {
           "id": "21-02",
-          "time": "11:30–12:45",
-          "title": "Ăn trưa",
+          "time": "11:30–12:30",
+          "title": "Ăn trưa gần Ga49",
           "kind": "choose",
           "options": [
-            "bep-khoi",
-            "hoi-no",
-            "tay-bac"
+            "com-tam-thien-nhan",
+            "com-tam-my-linh"
           ],
           "selected": [],
-          "note": "Tây Bắc Quán lệch tuyến, chỉ chọn nếu chủ động đổi hướng"
+          "note": "Chọn một quán. Nếu đông, lấy cơm mang về. Quay lại Ga49 chậm nhất 12:30."
         },
         {
           "id": "21-03",
@@ -1314,7 +1359,6 @@ const priceLabel = price => {
 };
 const statusLabels = {booked:"Đã đặt", "approved-not-booked":"Đã duyệt · chưa đặt", candidate:"Đề xuất"};
 const slotNotes = {
-  "21-02": "Tây Bắc Quán lệch tuyến.",
   "21-05": "Chọn một quán nếu đi. Dễ đông lúc hoàng hôn.",
   "21-06": "Rừng Lá Kim lệch tuyến.",
   "22-03": "Chèo SUP khi đã đặt chỗ và thời tiết phù hợp.",
