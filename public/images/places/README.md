@@ -28,6 +28,7 @@
 | `seen` | The Seen House | 1 | [Visit Lâm Đồng](https://visitlamdong.vn/vi/theseenhousecoffee) |
 | `thong` | Thông Trước Nhà | 1 | [Hoa Xương Rồng](https://hoaxuongrong.vn/quan-cafe-view-doi-thong-da-lat/) |
 | `miet` | Miết Miết | 1 | [Lang Thang Đà Lạt](https://langthangdalat.com/dia-diem/miet-miet/) |
+| `rung-giao-huong` | Rừng Giao Hưởng | 1 | [Lang Thang Đà Lạt](https://langthangdalat.com/dia-diem/rung-giao-huong/) |
 | `hidden-land` | Hidden Land | 2 | [Nắng Trip](https://nangtrip.com/activities/hidden-land-da-lat) |
 | `rung-la-kim` | Rừng Lá Kim | 2 | [Tripmap](https://tripmap.vn/cafe-rung_la_kim_cafe-d3a6bc7a-phuong_xuan_huong_da_lat.html) |
 | `tui-mo-to-garden` | Túi Mơ To Garden Restaurant | 1 | [VnGuide](https://vnguide.vn/restaurant/nha-hang-tui-mo-to-garden-restaurant) |
