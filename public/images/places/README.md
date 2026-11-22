@@ -60,3 +60,5 @@
 | `tay-mo-amateurs` | Tay Mơ Amateurs | 1 | [Traveloka Go & Share](https://www.traveloka.com/vi-vn/explore/culinary/gns-quan-cafe-ban-dia-da-lat/215989) |
 | `datanla-thac-1` | Xe trượt Thác 1 · Datanla | 1 | [Dalattourist](https://dalattourist.com.vn/hoat-dong) |
 | `datanla-thac-3` | Xe trượt Thác 3 · Datanla | 1 | [Dalattourist](https://dalattourist.com.vn/hoat-dong) |
+| `doc-thi` | Tiệm cà phê Dốc Thị | 1 | [Visit Lâm Đồng](https://visitlamdong.vn/vi/docthidalat) |
+| `kong-coffee` | Kong Coffee | 1 | [Vietravel](https://travel.com.vn/tin-tuc-du-lich/doi-da-chien-da-lat-v18547.aspx) |
