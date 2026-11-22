@@ -58,3 +58,5 @@
 | `ngon-a-tran-phu` | Bánh Căn Bánh Mì Xíu Mại Ngon Á | 1 | [Tôi Đi Đâu?](https://toididau.net/place/banh-can-banh-mi-xiu-mai-ngon-a/29799) |
 | `lavender-tuyen-lam` | Lavender Đà Lạt Coffee House | 1 | [Lavender Đà Lạt](https://lavenderdalat.com/cafe-nha-hang-lavender-da-lat/) |
 | `tay-mo-amateurs` | Tay Mơ Amateurs | 1 | [Traveloka Go & Share](https://www.traveloka.com/vi-vn/explore/culinary/gns-quan-cafe-ban-dia-da-lat/215989) |
+| `datanla-thac-1` | Xe trượt Thác 1 · Datanla | 1 | [Dalattourist](https://dalattourist.com.vn/hoat-dong) |
+| `datanla-thac-3` | Xe trượt Thác 3 · Datanla | 1 | [Dalattourist](https://dalattourist.com.vn/hoat-dong) |
