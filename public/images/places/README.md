@@ -55,3 +55,6 @@
 | `tam-trinh` | Tám Trình Coffee Experiences | 1 | [Tám Trình Coffee Experiences](https://tamtrinhcoffee.com/tourist-attraction/) |
 | `sambodhi` | Sambodhi Coffee & Roastery | 1 | [Sambodhi Coffee](https://sambodhicoffee.com/) |
 | `vuon-rung` | Cà Phê Vườn Rừng · The Married Beans | 1 | [The Married Beans](https://www.themarriedbeans.com/en/pages/stores) |
+| `ngon-a-tran-phu` | Bánh Căn Bánh Mì Xíu Mại Ngon Á | 1 | [Tôi Đi Đâu?](https://toididau.net/place/banh-can-banh-mi-xiu-mai-ngon-a/29799) |
+| `lavender-tuyen-lam` | Lavender Đà Lạt Coffee House | 1 | [Lavender Đà Lạt](https://lavenderdalat.com/cafe-nha-hang-lavender-da-lat/) |
+| `tay-mo-amateurs` | Tay Mơ Amateurs | 1 | [Traveloka Go & Share](https://www.traveloka.com/vi-vn/explore/culinary/gns-quan-cafe-ban-dia-da-lat/215989) |
