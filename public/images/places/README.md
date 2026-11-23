@@ -62,3 +62,6 @@
 | `datanla-thac-3` | Xe trượt Thác 3 · Datanla | 1 | [Dalattourist](https://dalattourist.com.vn/hoat-dong) |
 | `doc-thi` | Tiệm cà phê Dốc Thị | 1 | [Visit Lâm Đồng](https://visitlamdong.vn/vi/docthidalat) |
 | `kong-coffee` | Kong Coffee | 1 | [Vietravel](https://travel.com.vn/tin-tuc-du-lich/doi-da-chien-da-lat-v18547.aspx) |
+| `xiumai-hoang-dieu-47` | Bánh mì xíu mại 47 | 1 | [Tôi Đi Đâu?](https://toididau.net/place/banh-mi-xiu-mai-47/29456) |
+| `xiumai-co-truc` | Bánh mì xíu mại 79 Cô Trúc | 1 | [Vietravel](https://travel.com.vn/tin-tuc-du-lich/banh-mi-xiu-mai-da-lat-v18497.aspx) |
+| `xiumai-co-hong` | Bánh mì xíu mại Cô Hồng | 1 | [Vietravel](https://travel.com.vn/tin-tuc-du-lich/banh-mi-xiu-mai-da-lat-v18497.aspx) |
